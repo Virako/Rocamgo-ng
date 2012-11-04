@@ -141,14 +141,15 @@ def main(parser):
                 radious = Round(pixel[2])
                 # Comprobar el color en la imagen
                 color = check_color_stone(pt, radious, ideal_img, threshold)
+                position = Stone.pixel_to_position(ideal_img.width, pixel)
                 if color == BLACK:
                     #print "BLACK"
                     Circle(ideal_img, pt, radious, CV_RGB(255,0,0),2)
-                    stones.append(Stone(color, img=ideal_img, pix=pt))
+                    stones.append(Stone(color, position))
                 elif color == WHITE:
                     #print "WHITE"
                     Circle(ideal_img, pt, radious, CV_RGB(0,255,0),2)
-                    stones.append(Stone(color, img=ideal_img, pix=pt))
+                    stones.append(Stone(color, position))
                 else:
                     #Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
                     false_stones += 1

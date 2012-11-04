@@ -40,33 +40,26 @@ from src.cte import BLACK
 
 class Stone:
     """Clase piedra. """
-    def __init__(self, color, img=None, pix=None, pt=None):
+    def __init__(self, color, pt):
         """Inicializamos una piedra, si no tenemos la posición, buscamos cual es esa posición dado una imagen ideal y un pixel. 
 
         :Param color: color de la piedra, BLACK or WHITE
-        :Type color: int 
-        :Param img: imagen en formato ideal
-        :Type img: IplImage
-        :Keyword img: None si no le pasamos ninguna imagen por parámetro
-        :Param pix: pixel donde se encuentra la piedra en la imagen
-        :Type pix: tuple
-        :Keyword pix: None si no le pasamos ningun pixel por parámetro
+        :Type color: int
         :Param pt: punto donde se encuentra la piedra en el tablero
         :Type pt: tuple
-        :Keyword pt: None si no le pasamos ningún punto parámetro. """
-        if not img and not pix:
-            self.pt = pt
-        elif not pt:
-            square_w = float(img.width)/GOBAN_SIZE
-            border_w = square_w/2
-            x = int(round((pix[0] - border_w)/square_w))
-            square_h = float(img.width)/GOBAN_SIZE
-            border_h = square_h/2
-            y = int(round((pix[1] - border_h)/square_h))
-            self.pt = [x, y]
+        """
+        self.pt = pt
         self.color = color
         self.x, self.y = self.pt
-
+        
+    @staticmethod    
+    def pixel_to_position(width, pixel):
+        """ Calcula las coordenadas en el tablero a partir de un pixel en el mismo. """
+        square_size = float(width) / GOBAN_SIZE
+        border_size = square_size / 2
+        x = int(round((pixel[0] - border_size) / square_size))
+        y = int(round((pixel[1] - border_size) / square_size))
+        return x, y
 
     def __str__(self):
         color = 'black' if self.color==BLACK else 'white'
