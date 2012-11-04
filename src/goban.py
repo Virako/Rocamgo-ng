@@ -35,7 +35,6 @@ from src.cte import GOBAN_SIZE
 from src.cte import WHITE
 from src.cte import BLACK
 from src.kifu import Kifu
-from igs import Igs
 
 class Goban:
     """Clase tablero, contiene la matriz de estadíticas y funciones para rellenar el tablero. """
@@ -52,9 +51,10 @@ class Goban:
         self.statistical = [[[0, 8]] * size for i in range(size)]
         self.stones = set()
         self.kifu = Kifu()
-        user = raw_input("Insert your user: ")
-        password = raw_input("Insert your password: ")
-        self.igs = Igs(user, password)
+        self.igs = None
+    
+    def set_igs_connection(self, conn):
+        self.igs = conn
     
 
     def add_stones_to_statistical(self, stones):

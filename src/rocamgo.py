@@ -75,6 +75,7 @@ from cv import Get1D
 from cv import Round
 from cv import CV_RGB
 import argparse
+from igs import Igs
 
 
 
@@ -96,12 +97,16 @@ def main(parser):
         threshold=150 
     if parser.record:
         record = Record(parser.record, QueryFrame(camera))
-
+            
     prev_corners = None
     current_corners = None
     good_corners = None
     ideal_img = None
     goban = Goban(GOBAN_SIZE)
+    
+    if parser.igs:
+        igs = Igs(parser.igs[0], parser.igs[1])
+        goban.set_igs_connection(igs)
 
     while camera: 
         # Select image from camera 
@@ -110,7 +115,7 @@ def main(parser):
         img = QueryFrame(camera) # Test videos
         if parser.record:
             record.add_frame(img)
-
+            
         # previous corners
         prev_corners = copy(current_corners)
 
@@ -173,7 +178,7 @@ def main(parser):
         key = WaitKey(1)
         if key == 27: # Esc
             goban.kifu.end_file()
-            goban.igs.close()
+            igs.close()
             break
 
 if __name__ == "__main__":
@@ -186,6 +191,13 @@ if __name__ == "__main__":
         help='Numbers of cameras in the computer. ')
     capture_source_arg_group.add_argument('--video', action='store', 
         help='Filename video. ')
+    
+    replay_arg_group = parser.add_argument_group('Available replayers:')
+    #FIXME: Possible credential leak via shell history
+    replay_arg_group.add_argument('--igs', nargs=2, metavar=('USER', 'PASS'),
+        help='Replay game in IGS. Use USER and PASS as login credentials')
+
+    
     results = parser.parse_args()
 
     main(results)
