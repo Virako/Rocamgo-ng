@@ -58,9 +58,11 @@ def get_max_edge(corners):
     """
     edges = []
     for c in xrange(NUM_EDGES):
-        edges.append( hypot(corners[c][0]-corners[(c+1)%4][0], \
-          corners[c][1]-corners[(c+1)%4][1] ) )
-    return int(max(edges)*((GOBAN_SIZE+2.0)/GOBAN_SIZE))
+        if c == 0 or c == 2:
+            edges.append(distance_between_two_points(corners[c],corners[(c+1)%4]))
+        else:
+            edges.append(distance_between_two_points(corners[c],corners[(c+2)%4]))
+    return int(max(edges))
 
 
 def get_external_corners(corners):
@@ -70,20 +72,24 @@ def get_external_corners(corners):
     :Type corners: list
     :Return: lista con los 4 corners exteriores
     :Rtype: list
-    """
+    """ 
     external_corners = [] # the orden of corners are ul, dl, dr, ur
     for c in range(len(corners)):
         if c >= 2:
-            x = corners[c][0] + distance_between_two_points(corners[c],\
-            corners[(c+2)%4])/GOBAN_SIZE/2
+            x = corners[c][0] + (corners[c][0]-corners[(c+2)%4][0])/(GOBAN_SIZE-1.0)/2.0
+            #distance_between_two_points(corners[c],\
+            #corners[(c+2)%4])/(GOBAN_SIZE-1)/2
         else:
-            x = corners[c][0] - distance_between_two_points(corners[c],\
-            corners[(c+2)%4])/GOBAN_SIZE/2
+            #x = corners[c][0] - distance_between_two_points(corners[c],\
+            #corners[(c+2)%4])/(GOBAN_SIZE-1)/2
+            x = corners[c][0] + (corners[c][0]-corners[(c+2)%4][0])/(GOBAN_SIZE-1.0)/2.0
         if c == 1 or c == 3:
-            y = corners[c][1] + distance_between_two_points(corners[c],\
-            corners[(c+2)%4])/GOBAN_SIZE/2
+            #y = corners[c][1] + distance_between_two_points(corners[c],\
+            #corners[(c+3)%4])/(GOBAN_SIZE-1)/2
+            y = corners[c][1] + (corners[c][1]-corners[(c+3)%4][1])/(GOBAN_SIZE-1.0)/2.0
         else:
-            y = corners[c][1] - distance_between_two_points(corners[c],\
-            corners[(c+2)%4])/GOBAN_SIZE/2
+            #y = corners[c][1] - distance_between_two_points(corners[c],\
+            #corners[(c+1)%4])/(GOBAN_SIZE-1)/2
+            y = corners[c][1] + (corners[c][1]-corners[(c+3)%4][1])/(GOBAN_SIZE-1.0)/2.0
         external_corners.append((x,y))
     return external_corners
