@@ -178,7 +178,8 @@ def main(parser):
         key = WaitKey(1)
         if key == 27: # Esc
             goban.kifu.end_file()
-            igs.close()
+            if parser.igs is not None:
+                igs.close()
             break
 
 if __name__ == "__main__":

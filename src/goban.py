@@ -72,7 +72,8 @@ class Goban:
                     print "Add", st.x+1, st.y+1 
                     # add kifu e igs
                     self.kifu.add_stone((st.x, st.y), st.color)
-                    self.igs.add_stone((st.x, st.y))
+                    if self.igs is not None:
+                        self.igs.add_stone((st.x, st.y))
                     self.statistical[st.x][st.y] = [0, 8]
                     self.goban[st.x][st.y] = True
             
@@ -85,7 +86,8 @@ class Goban:
                     print "Add", st.x+1, st.y+1
                     # add kifu e igs
                     self.kifu.add_stone((st.x, st.y), st.color)
-                    self.igs.add_stone((st.x, st.y))
+                    if self.igs is not None:
+                        self.igs.add_stone((st.x, st.y))
                     self.statistical[st.x][st.y] = [0, 8]
                     self.goban[st.x][st.y] = True
             elif values[1] <= 0 and values[0] > 0:
