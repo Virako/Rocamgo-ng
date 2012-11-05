@@ -59,6 +59,7 @@ from rocamgo.detection.perspective import perspective
 from rocamgo.detection.search_stones import search_stones
 from rocamgo.detection.search_stones import check_color_stone
 from rocamgo.game.stone import Stone
+from rocamgo.game.sgf_writer import SGFWriter
 from rocamgo.goban import Goban
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
@@ -176,7 +177,7 @@ def main(parser):
         # FPS
         key = WaitKey(1)
         if key == 27: # Esc
-            goban.kifu.end_file()
+            SGFWriter.write(goban.kifu)
             if parser.igs is not None:
                 igs.close()
             break
