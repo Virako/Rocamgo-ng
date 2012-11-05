@@ -46,9 +46,9 @@ def perspective(img, corners):
     :Return: imagen en modelo ideal
     :Rtype: IplImage
     """
-    print corners
+
+    max_edge = get_max_edge(corners)
     corners = get_external_corners(corners)
-    max_edge = get_max_edge(corners)+2
     # The goban have a relation 15/14 height/width
     relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur

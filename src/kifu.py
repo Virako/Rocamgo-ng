@@ -73,7 +73,7 @@ class Kifu:
         self.player_black = player1
         self.player_white = player2
         filename = str(datetime.now().strftime("%Y-%m-%d %H.%M.%S")) + "_" + player1 + "_vs_" + player2
-        self.dir = os.path.normpath(os.path.join(os.getcwd(), filename + ".sgf"))
+        self.dir = os.path.join(path, filename + ".sgf")
         header_file = HEADER_SGF
         header_file += [ "\nPB[%s]" %player1, "\nBR[%s]" %rank_player1, \
                          "\nPW[%s]" %player2, "\nWR[%s]" %rank_player2]
