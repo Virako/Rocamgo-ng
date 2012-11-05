@@ -20,8 +20,8 @@
 
 from cv import QueryFrame
 from cv import CaptureFromCAM
-from cte import NUM_EDGES
-from cte import GOBAN_SIZE
+from rocamgo.cte import NUM_EDGES
+from rocamgo.cte import GOBAN_SIZE
 from functions import distance_between_two_points as distance
 from functions import direction_between_two_points as direction
 from functions import get_max_edge

@@ -30,9 +30,9 @@ from cv import CV_HOUGH_GRADIENT
 from cv import HoughCircles
 from cv import Get2D 
 from cv import CreateMat
-from src.cte import GOBAN_SIZE
-from src.cte import BLACK
-from src.cte import WHITE
+from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import BLACK
+from rocamgo.cte import WHITE
 
 
 def search_stones(img, corners, dp=1.7):

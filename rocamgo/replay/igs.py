@@ -28,7 +28,7 @@
 """
 
 from socket import socket
-from cte import GOBAN_SIZE
+from rocamgo.cte import GOBAN_SIZE
 
 
 class Igs:

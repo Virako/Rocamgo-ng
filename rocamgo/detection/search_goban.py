@@ -36,7 +36,7 @@ from cv import GetMat
 from cv import CV_GAUSSIAN
 from cv import ApproxPoly
 from math import sqrt
-from src.cte import NUM_EDGES
+from rocamgo.cte import NUM_EDGES
 
 def count_perimeter(seq):
     """Contamos el perímetro de una secuencia dada. 

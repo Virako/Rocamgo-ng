@@ -52,20 +52,19 @@
 :Type key: int
 """
 
-from src.cameras import Cameras
-from src.search_goban import search_goban
-from src.check_goban_moved import check_goban_moved
-from src.perspective import perspective
-from src.search_stones import search_stones
-from src.search_stones import check_color_stone
-from src.stone import Stone
-from src.goban import Goban
-from src.cte import BLACK
-from src.cte import WHITE
-from src.cte import GOBAN_SIZE
+from rocamgo.detection.cameras import Cameras
+from rocamgo.detection.search_goban import search_goban
+from rocamgo.detection.check_goban_moved import check_goban_moved
+from rocamgo.detection.perspective import perspective
+from rocamgo.detection.search_stones import search_stones
+from rocamgo.detection.search_stones import check_color_stone
+from rocamgo.game.stone import Stone
+from rocamgo.goban import Goban
+from rocamgo.cte import BLACK
+from rocamgo.cte import WHITE
+from rocamgo.cte import GOBAN_SIZE
 from copy import copy
-from sys import path
-from record import Record
+from rocamgo.detection.record import Record
 from cv import ShowImage
 from cv import WaitKey
 from cv import Circle
@@ -75,7 +74,7 @@ from cv import Get1D
 from cv import Round
 from cv import CV_RGB
 import argparse
-from igs import Igs
+from rocamgo.replay.igs import Igs
 
 
 
@@ -198,7 +197,7 @@ if __name__ == "__main__":
     replay_arg_group.add_argument('--igs', nargs=2, metavar=('USER', 'PASS'),
         help='Replay game in IGS. Use USER and PASS as login credentials')
 
-    
+
     results = parser.parse_args()
 
     main(results)

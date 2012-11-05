@@ -34,7 +34,7 @@ from cv import CV_EVENT_LBUTTONDBLCLK
 from cv import CV_EVENT_LBUTTONDOWN
 from cv import CaptureFromCAM
 from cv import QueryFrame
-from src.cte import *
+from rocamgo.cte import *
 
 class Cameras:
     """Clase para abrir las cámaras disponibles en el ordenador. """

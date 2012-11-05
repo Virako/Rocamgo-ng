@@ -31,10 +31,10 @@
 :Type igs: Igs
 """
 
-from src.cte import GOBAN_SIZE
-from src.cte import WHITE
-from src.cte import BLACK
-from src.kifu import Kifu
+from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import WHITE
+from rocamgo.cte import BLACK
+from rocamgo.game.kifu import Kifu
 
 class Goban:
     """Clase tablero, contiene la matriz de estadíticas y funciones para rellenar el tablero. """
