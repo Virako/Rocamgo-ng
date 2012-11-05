@@ -23,6 +23,15 @@ class Kifu:
     """ Contiene la lista de movimientos que conforman una partida. """
     def __init__(self):
         self.move_list = []
+        self._observers = []
 
     def add_stone(self, stone):
         self.move_list.append(stone)
+        self.notify(stone)
+
+    def attach(self, observer):
+        self._observers.append(observer)
+    
+    def notify(self, stone):
+        for o in self._observers:
+            o.add_stone((stone.x,stone.y))

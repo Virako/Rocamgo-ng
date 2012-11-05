@@ -51,11 +51,6 @@ class Goban:
         self.statistical = [[[0, 8]] * size for i in range(size)]
         self.stones = set()
         self.kifu = Kifu()
-        self.igs = None
-    
-    def set_igs_connection(self, conn):
-        self.igs = conn
-    
 
     def add_stones_to_statistical(self, stones):
         """Recorremos la lista de piedras pasadas por parámetros para buscar hacer comprobaciones estadísticas en esas piedras, luego recorremos la lista de piedras guardada y la actualizamos. Actualiza kifu, igs y el tablero donde guardamos el estado de las piedras cuando detecta estadísticamente que una piedra se ha puesto.
@@ -70,10 +65,7 @@ class Goban:
             if values[1] <= 0 and values[0] > 0: 
                 if self.goban[st.x][st.y] != True:
                     print "Add", st.x+1, st.y+1 
-                    # add kifu e igs
                     self.kifu.add_stone(st)
-                    if self.igs is not None:
-                        self.igs.add_stone((st.x, st.y))
                     self.statistical[st.x][st.y] = [0, 8]
                     self.goban[st.x][st.y] = True
             
@@ -84,10 +76,7 @@ class Goban:
             if values[1] <= 0 and values[0] > 0: 
                 if self.goban[st.x][st.y] != True:
                     print "Add", st.x+1, st.y+1
-                    # add kifu e igs
                     self.kifu.add_stone(st)
-                    if self.igs is not None:
-                        self.igs.add_stone((st.x, st.y))
                     self.statistical[st.x][st.y] = [0, 8]
                     self.goban[st.x][st.y] = True
             elif values[1] <= 0 and values[0] > 0:
