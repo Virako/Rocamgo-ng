@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Rocamgo is recogniter of the go games by processing digital images with opencv.
+# Rocamgo is recogniter of the go games by processing digital images with
+# opencv.
 # Copyright (C) 2012 Víctor Ramirez de la Corte <virako.9 at gmail dot com>
 # Copyright (C) 2012 David Medina Velasco <cuidadoconeltecho at gmail dot com>
 #
@@ -27,9 +28,9 @@
 :Type pix: tuple
 :var pt: coordenada del tablero donde se encuentra la piedra
 :Type pt: tuple
-:var x: coordenada x del tablero donde se encuentra la piedra 
+:var x: coordenada x del tablero donde se encuentra la piedra
 :Type x: int
-:var y: coordenada y del tablero donde se encuentra la piedra 
+:var y: coordenada y del tablero donde se encuentra la piedra
 :Type y: int
 """
 
@@ -38,11 +39,11 @@ from rocamgo.cte import WHITE
 from rocamgo.cte import BLACK
 
 
-class Stone:
-    """Clase piedra. """
-    def __init__(self, color, pt):
-        """Inicializamos una piedra, si no tenemos la posición, buscamos cual es esa posición dado una imagen ideal y un pixel. 
+class Move:
+    """Clase movimiento. """
 
+    def __init__(self, color, pt):
+        """Inicializamos un movimiento, dando un color y una posición.
         :Param color: color de la piedra, BLACK or WHITE
         :Type color: int
         :Param pt: punto donde se encuentra la piedra en el tablero
@@ -51,10 +52,11 @@ class Stone:
         self.pt = pt
         self.color = color
         self.x, self.y = self.pt
-        
-    @staticmethod    
+
+    @staticmethod
     def pixel_to_position(width, pixel):
-        """ Calcula las coordenadas en el tablero a partir de un pixel en el mismo. """
+        """ Calcula las coordenadas en el tablero a partir de un pixel en el
+        mismo. """
         square_size = float(width) / GOBAN_SIZE
         border_size = square_size / 2
         x = int(round((pixel[0] - border_size) / square_size))
@@ -62,10 +64,9 @@ class Stone:
         return x, y
 
     def __str__(self):
-        color = 'black' if self.color==BLACK else 'white'
-        return "(%d, %d) --> %s" %(self.x, self.y, color)
+        color = 'black' if self.color == BLACK else 'white'
+        return "(%d, %d) --> %s" % (self.x, self.y, color)
 
-    
     def __eq__(self, st):
         return self.pt == st.pt and self.color == st.color
 
@@ -81,4 +82,4 @@ class Stone:
                 return y
 
     def __hash__(self):
-        return hash(self.x)^hash(self.y)^hash(self.color)
+        return hash(self.x) ^ hash(self.y) ^ hash(self.color)

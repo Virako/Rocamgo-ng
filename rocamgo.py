@@ -58,7 +58,7 @@ from rocamgo.detection.check_goban_moved import check_goban_moved
 from rocamgo.detection.perspective import perspective
 from rocamgo.detection.search_stones import search_stones
 from rocamgo.detection.search_stones import check_color_stone
-from rocamgo.game.stone import Stone
+from rocamgo.game.move import Move
 from rocamgo.game.sgf_writer import SGFWriter
 from rocamgo.goban import Goban
 from rocamgo.cte import BLACK
@@ -147,15 +147,15 @@ def main(parser):
                 radious = Round(pixel[2])
                 # Comprobar el color en la imagen
                 color = check_color_stone(pt, radious, ideal_img, threshold)
-                position = Stone.pixel_to_position(ideal_img.width, pixel)
+                position = Move.pixel_to_position(ideal_img.width, pixel)
                 if color == BLACK:
                     #print "BLACK"
                     Circle(ideal_img, pt, radious, CV_RGB(255,0,0),2)
-                    stones.append(Stone(color, position))
+                    stones.append(Move(color, position))
                 elif color == WHITE:
                     #print "WHITE"
                     Circle(ideal_img, pt, radious, CV_RGB(0,255,0),2)
-                    stones.append(Stone(color, position))
+                    stones.append(Move(color, position))
                 else:
                     #Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
                     false_stones += 1
