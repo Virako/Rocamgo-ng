@@ -63,6 +63,75 @@ class Goban:
     def invalid_move(self, move):
         return self.invalid_ko_move(move)
 
+    def get_group(self, pos, color, group=set()):
+        """ Funcion recursiva que busca, a partir de una posición, el grupo
+        correspondiente a esa posición.
+        :Param pos: Posición perteneciente al grupo en la buscaremos si sus
+        vecinos pertenecen o no al grupo.
+        :Type pos: tuple.
+        :Param group: grupo de posiciones que se encuentran dentro del grupo.
+        :Type group: set. """
+
+        # Out of range
+        if pos[0] in (-1, GOBAN_SIZE) or pos[1] in (-1, GOBAN_SIZE):
+            return group
+        if self.goban[pos[0]][pos[1]] != color:
+            return group
+        group.add(pos)
+        neighbour = ((0, -1), (0, 1), (1, 0), (-1, 0))
+        for n in neighbour:
+            pos_neig = (pos[0] + n[0], pos[1] + n[1])
+            if not pos_neig in group:
+                group = self.get_group(pos_neig, color, group)
+        return group
+
+    def get_liberties(self, pos, color):
+        """ Función que comprueba las libertades que tiene el grupo al que
+        pertenece la posición pasada por parámetro.
+        :Param pos: Posición perteneciente al grupo en la buscaremos si sus
+        vecinos pertenecen o no al grupo.
+        :Type pos: tuple.
+        :Param group: grupo de posiciones que se encuentran dentro del grupo.
+        :Type group: set. """
+
+        liberties = set()
+        group = self.get_group(pos, color)
+        neighbour = ((0, -1), (0, 1), (1, 0), (-1, 0))
+        for pos in group:
+            for n in neighbour:
+                pos_neig = (pos[0] - n[0], pos[1] - n[1])
+                if not self.goban[pos_neig[0]][pos_neig[1]]:
+                    liberties.add(pos_neig)
+        return liberties
+
+    def is_last_liberty(self, pos, color):
+        """ Comprobamos que la posición dada sea la última libertad del
+        grupo.
+        :Param pos: Posición perteneciente al grupo en la buscaremos si sus
+        vecinos pertenecen o no al grupo.
+        :Type pos: tuple.
+        :Param group: grupo de posiciones que se encuentran dentro del grupo.
+        :Type group: set. """
+
+        neighbour = ((0, -1), (0, 1), (1, 0), (-1, 0))
+        for n in neighbour:
+            pos_neig = (pos[0] - n[0], pos[1] - n[1])
+            if len(get_liberties(pos_neig, color)) == 1:
+                return True
+        return False
+
+    def is_move_kill(self, pos, color):
+        """ Comprobamos que un movimiento capture un grupo.
+        :Param pos: Posición perteneciente al grupo en la buscaremos si sus
+        vecinos pertenecen o no al grupo.
+        :Type pos: tuple.
+        :Param group: grupo de posiciones que se encuentran dentro del grupo.
+        :Type group: set. """
+        if color == BLACK:
+            return is_last_liberty(pos, WHITE)
+        elif color == WHITE:
+            return is_last_liberty(pos, BLACK)
+
     def invalid_ko_move(self, move):
         """ Comprueba si el movimiento es un movimiento inválido de ko.
         :Param move: Movimiento a comprobar.
