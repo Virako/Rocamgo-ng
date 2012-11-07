@@ -75,6 +75,7 @@ from cv import CV_RGB
 import argparse
 from rocamgo.replay.igs import Igs
 from rocamgo.detection.capture_source import CaptureSource
+from rocamgo.detection.goban import Goban as gdetect
 
 
 def main(parser):
@@ -85,6 +86,7 @@ def main(parser):
     print parser.record
 
     cs = CaptureSource()
+    gd = gdetect()
 
     if parser.camera:
         cs.camera(int(parser.camera))
@@ -96,10 +98,7 @@ def main(parser):
     if parser.record:
         record = Record(parser.record, cs.get_resolution())
 
-    prev_corners = None
-    current_corners = None
-    good_corners = None
-    ideal_img = None
+
     goban = Goban(GOBAN_SIZE)
 
     if parser.igs:
@@ -117,25 +116,13 @@ def main(parser):
         if parser.record:
             record.add_frame(img)
 
-        # previous corners
-        prev_corners = copy(current_corners)
-
-        # Detect goban
-        current_corners = search_goban(img)
-        if not current_corners:
-            current_corners = copy(prev_corners)
-
-        # Check goban moved
-        if check_goban_moved(prev_corners, current_corners):
-            good_corners = copy(current_corners)
-            # print "MOVED"
-
+        ideal_img, good_corners = gd.extract(img)
         if good_corners:
             # Paint corners for tested
             for corner in good_corners:
                 Circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
             # Transform goban to ideal form
-            ideal_img = perspective(img, good_corners)  # TODO no hallar 2 veces
+#            ideal_img = perspective(img, good_corners)  # TODO no hallar 2 veces
 
         if ideal_img:
             circles = search_stones(ideal_img, good_corners)
