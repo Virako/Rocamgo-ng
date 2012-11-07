@@ -178,10 +178,10 @@ def main(parser):
         # FPS
         key = WaitKey(1)
         if key == 27: # Esc
-            SGFWriter.write(goban.kifu)
-            if parser.igs is not None:
-                igs.close()
             break
+    SGFWriter.write(goban.kifu)
+    if parser.igs is not None:
+        igs.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Rocamgo option. ')
