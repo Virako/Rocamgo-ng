@@ -121,48 +121,17 @@ def main(parser):
             # Paint corners for tested
             for corner in good_corners:
                 Circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
-            # Transform goban to ideal form
-#            ideal_img = perspective(img, good_corners)  # TODO no hallar 2 veces
 
         if ideal_img:
-            circles = search_stones(ideal_img, good_corners)
-            false_stones = 0
-            stones = []
-            for n in range(circles.cols):
-                pixel = Get1D(circles, n)
-                pt = (Round(pixel[0]), Round(pixel[1]))
-                radious = Round(pixel[2])
-                # Comprobar el color en la imagen
-                color = check_color_stone(pt, radious, ideal_img, threshold)
-                position = Move.pixel_to_position(ideal_img.width, pixel)
-                if color == BLACK:
-                    # print "BLACK"
-                    Circle(ideal_img, pt, radious, CV_RGB(255, 0, 0), 2)
-                    stones.append(Move(color, position))
-                elif color == WHITE:
-                    # print "WHITE"
-                    Circle(ideal_img, pt, radious, CV_RGB(0, 255, 0), 2)
-                    stones.append(Move(color, position))
-                else:
-                    # Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
-                    false_stones += 1
+            ideal_img, stones = gd.search_stones(ideal_img, threshold)
 
-            # print "Hay %d piedras. " %(circles.cols - false_stones)
             # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
 
             ShowImage("Ideal", ideal_img)
 
-
-        # Show image
         ShowImage("Camera", img)
 
-
-        # Detect stone
-
-        # Upload to internet
-
-        # FPS
         key = WaitKey(1)
         if key == 27:  # Esc
             break
