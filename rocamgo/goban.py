@@ -116,7 +116,7 @@ class Goban:
         neighbour = ((0, -1), (0, 1), (1, 0), (-1, 0))
         for n in neighbour:
             pos_neig = (pos[0] - n[0], pos[1] - n[1])
-            if len(get_liberties(pos_neig, color)) == 1:
+            if len(self.get_liberties(pos_neig, color)) == 1:
                 return True
         return False
 
@@ -128,9 +128,9 @@ class Goban:
         :Param group: grupo de posiciones que se encuentran dentro del grupo.
         :Type group: set. """
         if color == BLACK:
-            return is_last_liberty(pos, WHITE)
+            return self.is_last_liberty(pos, WHITE)
         elif color == WHITE:
-            return is_last_liberty(pos, BLACK)
+            return self.is_last_liberty(pos, BLACK)
 
     def invalid_ko_move(self, move):
         """ Comprueba si el movimiento es un movimiento inválido de ko.
