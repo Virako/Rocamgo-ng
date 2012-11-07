@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""":var cam: Objeto Cameras 
+""":var cam: Objeto Cameras
 :Type cam: Cameras
 :var cams_found: número de cámaras encontradas en el ordenador
 :Type cams_found: int
@@ -31,9 +31,9 @@
 :var good_corners: últimas esquinas buenas encontradas
 :Type good_corners: list
 :var img: imagen actual sacada de la cámara o video
-:Type img: IplImage 
+:Type img: IplImage
 :var ideal_img: tablero en formato ideal
-:Type ideal_img: IplImage 
+:Type ideal_img: IplImage
 :var goban: Objeto tablero
 :Type goban: Goban
 :var circles: circulos encontrado en la imagen
@@ -48,7 +48,7 @@
 :Type radious: float
 :var color: color de la piedra
 :Type color: int
-:var key: tecla pulsada       
+:var key: tecla pulsada
 :Type key: int
 """
 
@@ -69,14 +69,12 @@ from rocamgo.detection.record import Record
 from cv import ShowImage
 from cv import WaitKey
 from cv import Circle
-from cv import CaptureFromFile
-from cv import QueryFrame
 from cv import Get1D
 from cv import Round
 from cv import CV_RGB
 import argparse
 from rocamgo.replay.igs import Igs
-
+from rocamgo.detection.capture_source import CaptureSource
 
 
 def main(parser):
@@ -86,37 +84,39 @@ def main(parser):
     print parser.video
     print parser.record
 
+    cs = CaptureSource()
+
     if parser.camera:
-        cam = Cameras()
-        cams_found = cam.check_cameras(int(parser.camera))
-        camera = cam.show_and_select_camera()
+        cs.camera(int(parser.camera))
         # TODO
-        threshold=190
+        threshold = 190
     elif parser.video:
-        camera = CaptureFromFile(parser.video)
-        threshold=150 
+        cs.video(parser.video)
+        threshold = 150
     if parser.record:
-        record = Record(parser.record, QueryFrame(camera))
-            
+        record = Record(parser.record, cs.get_resolution())
+
     prev_corners = None
     current_corners = None
     good_corners = None
     ideal_img = None
     goban = Goban(GOBAN_SIZE)
-    
+
     if parser.igs:
         igs = Igs(parser.igs[0], parser.igs[1])
         goban.kifu.attach(igs)
-        #goban.set_igs_connection(igs)
+        # goban.set_igs_connection(igs)
 
-    while camera: 
-        # Select image from camera 
+    while True:
+        # Select image from camera
         # TODO
-        #img = camera.get_frame()
-        img = QueryFrame(camera) # Test videos
+        # img = camera.get_frame()
+        img = cs.get_frame()  # Test videos
+        if not img:
+            break
         if parser.record:
             record.add_frame(img)
-            
+
         # previous corners
         prev_corners = copy(current_corners)
 
@@ -125,17 +125,17 @@ def main(parser):
         if not current_corners:
             current_corners = copy(prev_corners)
 
-        # Check goban moved 
+        # Check goban moved
         if check_goban_moved(prev_corners, current_corners):
             good_corners = copy(current_corners)
-            #print "MOVED"
-        
+            # print "MOVED"
+
         if good_corners:
-            # Paint corners for tested 
+            # Paint corners for tested
             for corner in good_corners:
-                Circle(img, corner, 4, (255,0,0), 4, 8, 0)
+                Circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
             # Transform goban to ideal form
-            ideal_img = perspective(img, good_corners) # TODO no hallar 2 veces
+            ideal_img = perspective(img, good_corners)  # TODO no hallar 2 veces
 
         if ideal_img:
             circles = search_stones(ideal_img, good_corners)
@@ -149,35 +149,35 @@ def main(parser):
                 color = check_color_stone(pt, radious, ideal_img, threshold)
                 position = Move.pixel_to_position(ideal_img.width, pixel)
                 if color == BLACK:
-                    #print "BLACK"
-                    Circle(ideal_img, pt, radious, CV_RGB(255,0,0),2)
+                    # print "BLACK"
+                    Circle(ideal_img, pt, radious, CV_RGB(255, 0, 0), 2)
                     stones.append(Move(color, position))
                 elif color == WHITE:
-                    #print "WHITE"
-                    Circle(ideal_img, pt, radious, CV_RGB(0,255,0),2)
+                    # print "WHITE"
+                    Circle(ideal_img, pt, radious, CV_RGB(0, 255, 0), 2)
                     stones.append(Move(color, position))
                 else:
-                    #Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
+                    # Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
                     false_stones += 1
 
-            #print "Hay %d piedras. " %(circles.cols - false_stones)
-            # Añadimos las piedras para trabajar con ellas estadísticamente 
+            # print "Hay %d piedras. " %(circles.cols - false_stones)
+            # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
 
             ShowImage("Ideal", ideal_img)
-            
+
 
         # Show image
         ShowImage("Camera", img)
 
-        
+
         # Detect stone
-        
+
         # Upload to internet
 
         # FPS
         key = WaitKey(1)
-        if key == 27: # Esc
+        if key == 27:  # Esc
             break
     SGFWriter.write(goban.kifu)
     if parser.igs is not None:
@@ -191,11 +191,11 @@ if __name__ == "__main__":
     capture_source_arg_group = parser.add_mutually_exclusive_group(required='true')
     capture_source_arg_group.add_argument('--camera', action='store',
         help='Numbers of cameras in the computer. ')
-    capture_source_arg_group.add_argument('--video', action='store', 
+    capture_source_arg_group.add_argument('--video', action='store',
         help='Filename video. ')
-    
+
     replay_arg_group = parser.add_argument_group('Available replayers:')
-    #FIXME: Possible credential leak via shell history
+    # FIXME: Possible credential leak via shell history
     replay_arg_group.add_argument('--igs', nargs=2, metavar=('USER', 'PASS'),
         help='Replay game in IGS. Use USER and PASS as login credentials')
 

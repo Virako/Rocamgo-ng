@@ -26,7 +26,7 @@ from cv import CV_FOURCC
 class Record:
     """ Grabar video de la partida para enviar al desarrollador y poder ayudarlo
     a mejorar el programa. """
-    def __init__(self, filename, frame):
+    def __init__(self, filename, resolution):
         """
         :Param filename: Nombre del archivo del video.  
         :Type filename: str
@@ -41,8 +41,8 @@ class Record:
         H263 = CV_FOURCC('U','2','6','3') 
         H263I = CV_FOURCC('I','2','6','3') 
         FLV1 = CV_FOURCC('D','I','V','X') 
-
-        self.video = CreateVideoWriter(filename, FLV1, FPS, (frame.width, frame.height))
+        # TODO: Correctly set FPS
+        self.video = CreateVideoWriter(filename, FLV1, FPS, resolution)
         print "SELFFFF", self.video
         self.frame = 0
 
@@ -53,7 +53,7 @@ class Record:
         """
         self.frame += 1
         add = WriteFrame(self.video, frame)
-        print "WriteFrame -->", add
+#        print "WriteFrame -->", add
 
     def part_video(self, first_frame, last_frame):
         """ Dado dos frames, obtener el video que se encuentre entre ambos.
