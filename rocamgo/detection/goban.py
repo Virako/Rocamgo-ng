@@ -21,6 +21,8 @@ class Goban:
         self._prev_corners = None
         self._good_corners = None
         self.current_corners = None
+        self.search_stones = None
+        self.select_stone_search_algo('old')
 
     def extract(self, image):
 
@@ -40,7 +42,10 @@ class Goban:
             return perspective(image, self._good_corners), self._good_corners
         return None, []
 
-    def search_stones(self, image, threshold):
+    def select_stone_search_algo(self, method):
+        self.search_stones = eval("self.search_stones_" + method)
+
+    def search_stones_old(self, image, threshold):
         circles = search_stones(image, None)
         false_stones = 0
         stones = []
@@ -63,3 +68,11 @@ class Goban:
                 # Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
                 false_stones += 1
         return image, stones
+
+    def search_stones_mask(self, image, threshold):
+        # Apply color mask for black. Find circles. Repeat for white. Return union
+        pass
+
+    def search_stones_simple(self, image, threshold):
+        # Apply color mask as in search_stones_mask. Find contours with approx area of a circle. Find centroids. 
+        pass
