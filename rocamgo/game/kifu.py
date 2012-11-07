@@ -17,6 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from game_info import GameInfo
 
 
 class Kifu:
@@ -24,6 +25,7 @@ class Kifu:
     def __init__(self):
         self.move_list = []
         self._observers = []
+        self.info = GameInfo()
 
     def add_stone(self, stone):
         self.move_list.append(stone)

@@ -31,11 +31,8 @@
 :Type BLACK: int
 :var WHITE: constante para decir que una piedra es blanca
 :Type WHITE: int
-:var HEADER_SGF: cabecera de un archivo .sgf 
-:Type HEADER_SGF: str
 """
 
-import time
 
 NUM_EDGES = 4
 RELATION_WEIGHT_HEIGHT = 14/15.0
@@ -44,16 +41,7 @@ GOBAN_SIZE = 19
 BLACK = 1
 WHITE = 2
 
-current_date = time.strftime("%d %b %Y")
 
-HEADER_SGF = [ "(;FF[4]GM[1]SZ[%d]" %(GOBAN_SIZE),
-            "\nAP[Rocamgo]",  
-            "\nHA[0]", 
-            "\nKM[6.5]",
-            "\nSZ[%s]" %GOBAN_SIZE,
-            "\nDT[%s]" %current_date,
-            "\nRU[Japanese]",
-          ]
 
 """
 FEATURES OF FILES .SGF
