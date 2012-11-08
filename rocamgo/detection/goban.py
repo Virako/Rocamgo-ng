@@ -1,19 +1,16 @@
 from copy import copy
 
-from cv import Circle
-from cv import Get1D
-from cv import Round
-from cv import CV_RGB
+import cv
 
 from rocamgo.detection.search_goban import search_goban
 from rocamgo.detection.check_goban_moved import check_goban_moved
 from rocamgo.detection.perspective import perspective
+from rocamgo.detection.search_stones import check_color_stone, search_stones
 
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.game.move import Move
-from rocamgo.detection.search_stones import check_color_stone, search_stones
 
 
 class Goban:
@@ -25,16 +22,10 @@ class Goban:
         self.select_stone_search_algo('old')
 
     def extract(self, image):
-
-        # previous corners
         self._prev_corners = copy(self.current_corners)
-
-        # Detect goban
         self.current_corners = search_goban(image)
         if not self.current_corners:
             self.current_corners = copy(self._prev_corners)
-
-        # Check goban moved
         if check_goban_moved(self._prev_corners, self.current_corners):
             self._good_corners = copy(self.current_corners)
             # print "MOVED"
@@ -50,19 +41,19 @@ class Goban:
         false_stones = 0
         stones = []
         for n in range(circles.cols):
-            pixel = Get1D(circles, n)
-            pt = (Round(pixel[0]), Round(pixel[1]))
-            radious = Round(pixel[2])
+            pixel = cv.Get1D(circles, n)
+            pt = (cv.Round(pixel[0]), cv.Round(pixel[1]))
+            radious = cv.Round(pixel[2])
             # Comprobar el color en la imagen
             color = check_color_stone(pt, radious, image, threshold)
             position = Move.pixel_to_position(image.width, pixel)
             if color == BLACK:
                 # print "BLACK"
-                Circle(image, pt, radious, CV_RGB(255, 0, 0), 2)
+                cv.Circle(image, pt, radious, cv.CV_RGB(255, 0, 0), 2)
                 stones.append(Move(color, position))
             elif color == WHITE:
                 # print "WHITE"
-                Circle(image, pt, radious, CV_RGB(0, 255, 0), 2)
+                cv.Circle(image, pt, radious, cv.CV_RGB(0, 255, 0), 2)
                 stones.append(Move(color, position))
             else:
                 # Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
@@ -70,9 +61,42 @@ class Goban:
         return image, stones
 
     def search_stones_mask(self, image, threshold):
-        # Apply color mask for black. Find circles. Repeat for white. Return union
-        pass
+        stones = []
+        smooth = cv.CloneImage(image)
+        cv.Smooth(image, smooth, cv.CV_GAUSSIAN, 5, 5)
+        hsv_img = cv.CreateImage(cv.GetSize(image), 8, 3)
+        cv.CvtColor(smooth, hsv_img, cv.CV_RGB2HSV)
+
+        masked_img = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        #FIXME: Illumination has a strong effect in white detection, try to fix
+        # it by tweaking the threshold or reduce contrast in the image
+        trickeryfu = {WHITE: [(0, 0, 191), (180, 255, 255)],
+            BLACK: [(0, 0, 0), (180, 255, 64)]}
+        for k in trickeryfu.keys():
+            color_range = trickeryfu.get(k)
+            cv.InRangeS(hsv_img, color_range[0], color_range[1], masked_img)
+            circles = self._get_circles(masked_img)
+            for n in range(circles.cols):
+                # TODO: Try to make this less ugly
+                pixel = cv.Get1D(circles, n)
+                pt = (cv.Round(pixel[0]), cv.Round(pixel[1]))
+                radius = cv.Round(pixel[2])
+                position = Move.pixel_to_position(image.width, pt)
+                stones.append(Move(k, position))
+                cv.Circle(image, pt, radius, cv.CV_RGB(255, 255, 255)
+                    if k == BLACK else cv.CV_RGB(0, 0, 0), 2)
+        return image, stones
 
     def search_stones_simple(self, image, threshold):
-        # Apply color mask as in search_stones_mask. Find contours with approx area of a circle. Find centroids. 
+        # Apply color mask as in search_stones_mask. Find contours with approx area of a circle. Find centroids.
         pass
+
+    def _get_circles(self, image, dp=1.7):
+        # TODO: HoughCircles calls Canny itself, get rid of this by
+        #  adjusting parameters
+        cv.Canny(image, image, 50, 55)
+        r = image.width / (GOBAN_SIZE * 2)
+        circles = cv.CreateMat(1, image.height * image.width, cv.CV_32FC3)
+        cv.HoughCircles(image, circles, cv.CV_HOUGH_GRADIENT, dp,
+            int(r * 0.5), 50, 55, int(r * 0.7), int(r * 1.2))
+        return circles
