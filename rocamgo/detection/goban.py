@@ -11,6 +11,7 @@ from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.game.move import Move
+import math
 
 
 class Goban:
@@ -104,15 +105,22 @@ class Goban:
             contours = cv.FindContours(masked_img, storage,
                 cv.CV_RETR_EXTERNAL, cv.CV_CHAIN_APPROX_SIMPLE,
                 offset=(0, 0))
-            for c in contours:
+            while contours:
                 # The original idea was to find the centroids.
                 #   This seems simpler
-                (x, y), radius = cv.MinEnclosingCircle(c)
-                position = Move.pixel_to_position(image.width, (x, y))
-                stones.append(Move(k, position))
-                cv.Circle(image, (x, y), radius, cv.CV_RGB(255, 255, 255)
-                    if k == BLACK else cv.CV_RGB(0, 0, 0), 2)
-                return image, stones
+                perimeter = cv.ArcLength(contours)
+                expected_perim = math.pi * image.width / GOBAN_SIZE
+                if (perimeter < 1.1 * expected_perim and
+                    perimeter > 0.9 * expected_perim):
+                    __, center, radius = cv.MinEnclosingCircle(contours)
+                    position = Move.pixel_to_position(image.width, center)
+                    stones.append(Move(k, position))
+                    center = tuple(cv.Round(v) for v in center)
+                    radius = cv.Round(radius)
+                    cv.Circle(image, center, radius, cv.CV_RGB(255, 255, 255)
+                        if k == BLACK else cv.CV_RGB(0, 0, 0), 2)
+                contours = contours.h_next()
+        return image, stones
 
     def _get_circles(self, image, dp=1.7):
         # TODO: HoughCircles calls Canny itself, get rid of this by
