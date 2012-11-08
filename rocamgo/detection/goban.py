@@ -88,8 +88,31 @@ class Goban:
         return image, stones
 
     def search_stones_simple(self, image, threshold):
-        # Apply color mask as in search_stones_mask. Find contours with approx area of a circle. Find centroids.
-        pass
+        stones = []
+        smooth = cv.CloneImage(image)
+        cv.Smooth(image, smooth, cv.CV_GAUSSIAN, 5, 5)
+        hsv_img = cv.CreateImage(cv.GetSize(image), 8, 3)
+        cv.CvtColor(smooth, hsv_img, cv.CV_RGB2HSV)
+
+        masked_img = cv.CreateImage(cv.GetSize(hsv_img), 8, 1)
+        trickeryfu = {WHITE: [(0, 0, 191), (180, 255, 255)],
+            BLACK: [(0, 0, 0), (180, 255, 64)]}
+        for k in trickeryfu.keys():
+            color_range = trickeryfu.get(k)
+            cv.InRangeS(hsv_img, color_range[0], color_range[1], masked_img)
+            storage = cv.CreateMemStorage()
+            contours = cv.FindContours(masked_img, storage,
+                cv.CV_RETR_EXTERNAL, cv.CV_CHAIN_APPROX_SIMPLE,
+                offset=(0, 0))
+            for c in contours:
+                # The original idea was to find the centroids.
+                #   This seems simpler
+                (x, y), radius = cv.MinEnclosingCircle(c)
+                position = Move.pixel_to_position(image.width, (x, y))
+                stones.append(Move(k, position))
+                cv.Circle(image, (x, y), radius, cv.CV_RGB(255, 255, 255)
+                    if k == BLACK else cv.CV_RGB(0, 0, 0), 2)
+                return image, stones
 
     def _get_circles(self, image, dp=1.7):
         # TODO: HoughCircles calls Canny itself, get rid of this by
