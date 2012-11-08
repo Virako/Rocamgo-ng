@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Rocamgo is recogniter of the go games by processing digital images with opencv.
+# Rocamgo is recogniter of the go games by processing digital images with
+# opencv.
 # Copyright (C) 2012 Víctor Ramirez de la Corte <virako.9 at gmail dot com>
 # Copyright (C) 2012 David Medina Velasco <cuidadoconeltecho at gmail dot com>
 #
@@ -18,17 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""":var cam: Objeto Cameras
-:Type cam: Cameras
-:var cams_found: número de cámaras encontradas en el ordenador
-:Type cams_found: int
-:var camera: cámara que estamos usando
-:Type camera: Camera
-:var prev_corners: esquinas del tablero anteriores encontradas
-:Type prev_corners: list
-:var current_corners: esquinas actuales del tablero encontradas
-:Type current_corners: list
-:var good_corners: últimas esquinas buenas encontradas
+""":var good_corners: últimas esquinas buenas encontradas
 :Type good_corners: list
 :var img: imagen actual sacada de la cámara o video
 :Type img: IplImage
@@ -36,46 +27,24 @@
 :Type ideal_img: IplImage
 :var goban: Objeto tablero
 :Type goban: Goban
-:var circles: circulos encontrado en la imagen
-:Type circles: CvMat
-:var false_stones: contador para piedras falsas, no son negras o blancas
-:Type false_stones: int
 :var stones: piedras detectadas como negras o blancas
 :Type stones: list
-:var pt: centro de la piedra
-:Type pt: tuple
-:var radious: radio de la piedra
-:Type radious: float
-:var color: color de la piedra
-:Type color: int
 :var key: tecla pulsada
 :Type key: int
 """
+import argparse
 
-from rocamgo.detection.cameras import Cameras
-from rocamgo.detection.search_goban import search_goban
-from rocamgo.detection.check_goban_moved import check_goban_moved
-from rocamgo.detection.perspective import perspective
-from rocamgo.detection.search_stones import search_stones
-from rocamgo.detection.search_stones import check_color_stone
-from rocamgo.game.move import Move
-from rocamgo.game.sgf_writer import SGFWriter
-from rocamgo.goban import Goban
-from rocamgo.cte import BLACK
-from rocamgo.cte import WHITE
-from rocamgo.cte import GOBAN_SIZE
-from copy import copy
-from rocamgo.detection.record import Record
 from cv import ShowImage
 from cv import WaitKey
 from cv import Circle
-from cv import Get1D
-from cv import Round
-from cv import CV_RGB
-import argparse
-from rocamgo.replay.igs import Igs
+
+from rocamgo.cte import GOBAN_SIZE
 from rocamgo.detection.capture_source import CaptureSource
 from rocamgo.detection.goban import Goban as gdetect
+from rocamgo.detection.record import Record
+from rocamgo.replay.igs import Igs
+from rocamgo.game.sgf_writer import SGFWriter
+from rocamgo.goban import Goban
 
 
 def main(parser):
@@ -98,7 +67,6 @@ def main(parser):
     if parser.record:
         record = Record(parser.record, cs.get_resolution())
 
-
     goban = Goban(GOBAN_SIZE)
 
     if parser.igs:
@@ -108,9 +76,7 @@ def main(parser):
 
     while True:
         # Select image from camera
-        # TODO
-        # img = camera.get_frame()
-        img = cs.get_frame()  # Test videos
+        img = cs.get_frame()
         if not img:
             break
         if parser.record:
@@ -124,7 +90,6 @@ def main(parser):
 
         if ideal_img:
             ideal_img, stones = gd.search_stones(ideal_img, threshold)
-
             # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
 
@@ -144,7 +109,8 @@ if __name__ == "__main__":
     parser.add_argument('--record', action='store',
          help='Record video for help to developers. ')
     parser.add_argument('--version', action='version', version='Rocamgo 0.33')
-    capture_source_arg_group = parser.add_mutually_exclusive_group(required='true')
+    capture_source_arg_group = parser.add_mutually_exclusive_group(
+        required='true')
     capture_source_arg_group.add_argument('--camera', action='store',
         help='Numbers of cameras in the computer. ')
     capture_source_arg_group.add_argument('--video', action='store',
@@ -154,7 +120,6 @@ if __name__ == "__main__":
     # FIXME: Possible credential leak via shell history
     replay_arg_group.add_argument('--igs', nargs=2, metavar=('USER', 'PASS'),
         help='Replay game in IGS. Use USER and PASS as login credentials')
-
 
     results = parser.parse_args()
 
