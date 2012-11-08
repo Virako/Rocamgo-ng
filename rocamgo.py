@@ -39,6 +39,7 @@ from cv import WaitKey
 from cv import Circle
 
 from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import __version__
 from rocamgo.detection.capture_source import CaptureSource
 from rocamgo.detection.goban import Goban as gdetect
 from rocamgo.detection.record import Record
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Rocamgo option. ')
     parser.add_argument('--record', action='store',
          help='Record video for help to developers. ')
-    parser.add_argument('--version', action='version', version='Rocamgo 0.33')
+    parser.add_argument('--version', action='version', version=__version__)
     capture_source_arg_group = parser.add_mutually_exclusive_group(
         required='true')
     capture_source_arg_group.add_argument('--camera', action='store',

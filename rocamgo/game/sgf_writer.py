@@ -1,7 +1,7 @@
 import os
 import datetime as dt
 
-from rocamgo.cte import WHITE, BLACK
+from rocamgo.cte import WHITE, BLACK, __version__
 
 
 class SGFWriter:
@@ -15,7 +15,7 @@ class SGFWriter:
         # Mandatory
         header = ["(;FF[4]GM[1]\n"]
         # Known
-        header.append("AP[Rocamgo 0.33]\n")
+        header.append("AP[%s]\n" % __version__)
         header.append("DT[%s]" % game.info.date)
         header.append("PB[%s]\n" % game.info.black_name)
         header.append("PW[%s]\n" % game.info.white_name)
