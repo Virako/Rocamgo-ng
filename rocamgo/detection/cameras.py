@@ -33,6 +33,8 @@ from cv import CV_EVENT_LBUTTONDBLCLK
 from cv import CaptureFromCAM
 from cv import QueryFrame
 
+from rocamgo.cte import MAX_CAMERAS
+
 class Cameras:
     """Clase para abrir las cámaras disponibles en el ordenador. """
 
