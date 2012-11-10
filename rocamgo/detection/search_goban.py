@@ -86,7 +86,7 @@ def filter_image(img):
     aux_1 = CreateMat(img.rows, img.cols, img.type)
     aux_2 = CreateMat(img.rows, img.cols, img.type)
     Canny(img, aux_2, 50, 200, 3)
-    Smooth(aux_2, aux_1, CV_GAUSSIAN, 3, 3)
+    Smooth(aux_2, aux_1, CV_GAUSSIAN, 1, 3)
     return aux_1
 
 
