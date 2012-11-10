@@ -25,16 +25,13 @@
 :Type camera: Capture
 """
 
-from cv import CreateFileCapture
 from cv import DestroyAllWindows
 from cv import ShowImage
 from cv import WaitKey
 from cv import SetMouseCallback
 from cv import CV_EVENT_LBUTTONDBLCLK
-from cv import CV_EVENT_LBUTTONDOWN
 from cv import CaptureFromCAM
 from cv import QueryFrame
-from rocamgo.cte import *
 
 class Cameras:
     """Clase para abrir las cámaras disponibles en el ordenador. """
@@ -96,7 +93,7 @@ class Cameras:
                     name_windows = camera.__str__()
                     img = QueryFrame(camera)
                     ShowImage(name_windows, img)
-                    key = WaitKey(60)
+                    WaitKey(60)
                     # TODO select camera push the key
                     SetMouseCallback(name_windows, self.on_mouse, camera) 
             DestroyAllWindows()

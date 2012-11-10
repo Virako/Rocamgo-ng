@@ -18,8 +18,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from cv import QueryFrame
-from cv import CaptureFromCAM
 from rocamgo.cte import NUM_EDGES
 from rocamgo.cte import GOBAN_SIZE
 from functions import distance_between_two_points as distance
@@ -99,7 +97,7 @@ def check_goban_moved(prev_corners, current_corners):
 
     if not prev_corners or not current_corners:
         return True
-    dist_min_of_movement = get_max_edge(prev_corners)/(2*GOBAN_SIZE)
+    # dist_min_of_movement = get_max_edge(prev_corners)/(2*GOBAN_SIZE)
     " Comprobamos primero si existe mucho movimiento. "
     dist = []
     directions = []

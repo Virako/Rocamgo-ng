@@ -31,7 +31,6 @@ from cv import CreateImage
 #from cv import CvtColor
 #from cv import GetMat
 from functions import get_max_edge
-from functions import distance_between_two_points
 from functions import get_external_corners
 
 
@@ -50,7 +49,7 @@ def perspective(img, corners):
     corners = get_external_corners(corners)
     max_edge = get_max_edge(corners)+2
     # The goban have a relation 15/14 height/width
-    relation = 14/15.0
+    # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur
     corners_transf = ((0,0),(0,max_edge),(max_edge,0),(max_edge,max_edge))
     mat = CreateMat(3, 3, CV_32FC1)

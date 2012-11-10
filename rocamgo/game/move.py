@@ -35,7 +35,6 @@
 """
 
 from rocamgo.cte import GOBAN_SIZE
-from rocamgo.cte import WHITE
 from rocamgo.cte import BLACK
 
 

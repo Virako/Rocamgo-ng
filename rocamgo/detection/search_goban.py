@@ -100,9 +100,6 @@ def detect_contour(img):
     storage = CreateMemStorage()
     seq = FindContours(img, storage, CV_RETR_TREE, CV_CHAIN_APPROX_NONE, 
       offset=(0, 0))
-    sequence = []
-    
-    aprox = True
     while seq:
         if len(seq) >= NUM_EDGES and (img.cols*img.rows) > ContourArea(seq) > \
             ((img.cols/2)*(img.rows/2)):

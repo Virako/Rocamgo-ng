@@ -16,7 +16,7 @@ class CaptureSource:
 
     def camera(self, num_cams):
         cam = Cameras()
-        cams_found = cam.check_cameras(num_cams)
+        cam.check_cameras(num_cams)
         self._video = cam.show_and_select_camera()
 
     def video(self, filename):

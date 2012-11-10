@@ -32,14 +32,14 @@ class Record:
         :Type filename: str
         """
         FPS = 8
-        MJPG = 1196444237 # CV_FOURCC('M','J','P','G')
-        MPEG_1 = CV_FOURCC('P','I','M','1') 
-        motion_jpeg = CV_FOURCC('M','J','P','G') 
-        MPEG_42 = CV_FOURCC('M','P','4','2') 
-        MPEG_43 = CV_FOURCC('D','I','V','3') 
-        MPEG_4 = CV_FOURCC('D','I','V','X') 
-        H263 = CV_FOURCC('U','2','6','3') 
-        H263I = CV_FOURCC('I','2','6','3') 
+        # MJPG = 1196444237 # CV_FOURCC('M','J','P','G')
+        # MPEG_1 = CV_FOURCC('P','I','M','1') 
+        # motion_jpeg = CV_FOURCC('M','J','P','G') 
+        # MPEG_42 = CV_FOURCC('M','P','4','2') 
+        # MPEG_43 = CV_FOURCC('D','I','V','3') 
+        # MPEG_4 = CV_FOURCC('D','I','V','X') 
+        # H263 = CV_FOURCC('U','2','6','3') 
+        # H263I = CV_FOURCC('I','2','6','3') 
         FLV1 = CV_FOURCC('D','I','V','X') 
         # TODO: Correctly set FPS
         self.video = CreateVideoWriter(filename, FLV1, FPS, resolution)
@@ -52,7 +52,7 @@ class Record:
         :Type frame: iplimage
         """
         self.frame += 1
-        add = WriteFrame(self.video, frame)
+        WriteFrame(self.video, frame)
 #        print "WriteFrame -->", add
 
     def part_video(self, first_frame, last_frame):
