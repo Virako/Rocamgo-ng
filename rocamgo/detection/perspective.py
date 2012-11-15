@@ -47,7 +47,12 @@ def perspective(img, corners):
     """
 
     corners = get_external_corners(corners)
-    max_edge = get_max_edge(corners)+2
+    max_edge = get_max_edge(corners)
+    if max_edge < 480:
+        max_edge=480
+    else :
+    # FIXME: possible ShowImage Bug
+        max_edge = max_edge+ 4 - max_edge%4
     # The goban have a relation 15/14 height/width
     # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur
