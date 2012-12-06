@@ -37,6 +37,9 @@ from cv import CV_GAUSSIAN
 from cv import ApproxPoly
 from math import sqrt
 from rocamgo.cte import NUM_EDGES
+from rocamgo.cte import MAX_BOARD_AREA
+from rocamgo.cte import MIN_BOARD_AREA
+from rocamgo.cte import MAX_POLY_APPROX_ERROR
 
 def count_perimeter(seq):
     """Contamos el perímetro de una secuencia dada. 
@@ -101,10 +104,10 @@ def detect_contour(img):
     seq = FindContours(img, storage, CV_RETR_TREE, CV_CHAIN_APPROX_NONE, 
       offset=(0, 0))
     while seq:
-        if len(seq) >= NUM_EDGES and (img.cols*img.rows) > ContourArea(seq) > \
-            ((img.cols/2)*(img.rows/2)):
+        if len(seq) >= NUM_EDGES and (img.cols*img.rows)*MAX_BOARD_AREA > ContourArea(seq) > \
+            ((img.cols*img.rows)*MIN_BOARD_AREA):
             perimeter = count_perimeter(seq)
-            seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*0.02, 1)
+            seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 return seq_app
             else:
