@@ -35,8 +35,14 @@ from cv import CvtColor
 from cv import GetMat
 from cv import CV_GAUSSIAN
 from cv import ApproxPoly
+from cv import ArcLength
+from cv import AdaptiveThreshold
+from cv import CV_ADAPTIVE_THRESH_MEAN_C
+from cv import CV_THRESH_BINARY_INV
 from math import sqrt
 from rocamgo.cte import NUM_EDGES
+from rocamgo.cte import MAX_BOARD_PERIMETER
+from rocamgo.cte import MIN_BOARD_PERIMETER
 from rocamgo.cte import MAX_BOARD_AREA
 from rocamgo.cte import MIN_BOARD_AREA
 from rocamgo.cte import MAX_POLY_APPROX_ERROR
@@ -104,9 +110,10 @@ def detect_contour(img):
     seq = FindContours(img, storage, CV_RETR_TREE, CV_CHAIN_APPROX_NONE, 
       offset=(0, 0))
     while seq:
-        if len(seq) >= NUM_EDGES and (img.cols*img.rows)*MAX_BOARD_AREA > ContourArea(seq) > \
-            ((img.cols*img.rows)*MIN_BOARD_AREA):
-            perimeter = count_perimeter(seq)
+        if len(seq) >= NUM_EDGES and \
+            ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > ArcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
+            (img.cols*img.rows)*MAX_BOARD_AREA > ContourArea(seq) > ((img.cols*img.rows)*MIN_BOARD_AREA):
+            perimeter = ArcLength(seq)
             seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 return seq_app
@@ -130,8 +137,9 @@ def search_goban(img):
     aux_gray = CreateImage((img.width, img.height), IPL_DEPTH_8U, 1)
     CvtColor(img, aux_gray, CV_RGB2GRAY)
     img_gray = GetMat(aux_gray, 0)
-    img_filtered = filter_image(img_gray)
-    contour = detect_contour(img_filtered)
+    AdaptiveThreshold(img_gray, img_gray, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY_INV,7)
+    #img_filtered = filter_image(img_gray)
+    contour = detect_contour(img_gray)
     if contour: 
         return get_corners(contour)
     else:
