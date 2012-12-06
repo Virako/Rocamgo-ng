@@ -21,6 +21,12 @@
 """
 :var NUM_EDGES: número de esquinas que existen en un tablero
 :Type NUM_EDGES: int
+:var MAX_BOARD_AREA: Tanto por 1 máximo del área del tablero
+:Type MAX_BOARD_AREA: float
+:var MIN_BOARD_AREA: Tanto por 1 mínimo del área del tablero
+:Type MIN_BOARD_AREA: float
+:var MAX_POLY_APPROX_ERROR: máximo error admisible
+:Type MAX_POLY_APPROX_ERROR: float
 :var RELATION_WEIGHT_HEIGHT: relación anchura/altura que existe en el tablero
 :Type RELATION_WEIGHT_HEIGHT: float
 :var MAX_CAMERAS: número máximo de cámaras a buscar
@@ -35,6 +41,9 @@
 
 
 NUM_EDGES = 4
+MAX_BOARD_AREA = 0.80
+MIN_BOARD_AREA = 0.25
+MAX_POLY_APPROX_ERROR=0.02
 RELATION_WEIGHT_HEIGHT = 14/15.0
 MAX_CAMERAS = 99
 GOBAN_SIZE = 19
