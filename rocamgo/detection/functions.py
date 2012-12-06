@@ -65,6 +65,38 @@ def get_max_edge(corners):
     return int(max(edges))
 
 
+def get_xy_correction(p1,p2):
+    """Retorna la componente media X e Y de una cuadrícula de un tablero. 
+
+    :Param p1: punto 1
+    :Type p1: tuple
+    :Param p2: punto 2
+    :Type p2: tuple
+    :Return: componentes X e Y
+    :Rtype: float
+    """
+    return abs(p1[0]-p2[0])/(GOBAN_SIZE-1.0)/2,abs(p1[1]-p2[1])/(GOBAN_SIZE-1.0)/2
+
+def get_external_corners_prespective_correction(corners):
+    """Retorna la correción de la lista de 4 puntos. 
+
+    :Param corners: lista de 4 puntos
+    :Type corners: list
+    :Return: máxima distancia entre 4 puntos
+    :Rtype: corners correction
+    :RType correction: list
+    """
+    left = distance_between_two_points(corners[0],corners[1])/distance_between_two_points(corners[2],corners[3])
+    top = distance_between_two_points(corners[0],corners[2])/distance_between_two_points(corners[1],corners[3])
+    X1,Y1=get_xy_correction(corners[0],corners[3])
+    X2,Y2=get_xy_correction(corners[1],corners[2])
+    correction=[]    
+    correction.append((corners[0][0]-X1*top*left,corners[0][1]-Y1*top*left))
+    correction.append((corners[1][0]-X2*left/top,corners[1][1]+Y2*left/top))
+    correction.append((corners[2][0]+X2*top/left,corners[2][1]-Y2*top/left))
+    correction.append((corners[3][0]+X1/(left*top),corners[3][1]+Y1/(left*top)))
+    return correction
+
 def get_external_corners(corners):
     """Halla los corners externos en el caso de que haber capturando los internos. 
 
