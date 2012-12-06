@@ -31,7 +31,7 @@ from cv import CreateImage
 #from cv import CvtColor
 #from cv import GetMat
 from functions import get_max_edge
-from functions import get_external_corners
+from functions import get_external_corners_prespective_correction
 
 
 def perspective(img, corners): 
@@ -46,7 +46,7 @@ def perspective(img, corners):
     :Rtype: IplImage
     """
 
-    corners = get_external_corners(corners)
+    corners = get_external_corners_prespective_correction(corners)
     max_edge = get_max_edge(corners)
     if max_edge < 480:
         max_edge=480
