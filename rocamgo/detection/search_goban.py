@@ -25,7 +25,7 @@ from cv import CreateMat
 from cv import CreateMemStorage
 from cv import CreateImage
 from cv import FindContours
-from cv import CV_RETR_TREE
+from cv import CV_RETR_CCOMP
 from cv import CV_CHAIN_APPROX_NONE
 from cv import CV_POLY_APPROX_DP
 from cv import CV_RGB2GRAY
@@ -107,8 +107,9 @@ def detect_contour(img):
     :Return: Contorno si no lo encuentra, sino None
     :Rtype: CvSeq """
     storage = CreateMemStorage()
-    seq = FindContours(img, storage, CV_RETR_TREE, CV_CHAIN_APPROX_NONE, 
+    seq = FindContours(img, storage, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE, 
       offset=(0, 0))
+    contornos=[]
     while seq:
         if len(seq) >= NUM_EDGES and \
             ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > ArcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
@@ -116,15 +117,13 @@ def detect_contour(img):
             perimeter = ArcLength(seq)
             seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
-                return seq_app
-            else:
-                return None
+                contornos.append(seq_app)
+        if seq.h_next() == None:
+            break
         else:
-            if seq.h_next() == None:
-                break
-            else:
-                seq = seq.h_next()
-    return None
+            seq = seq.h_next()
+            
+    return contornos[0]
 
 
 def search_goban(img): 
