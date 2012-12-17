@@ -50,11 +50,6 @@ from rocamgo.goban import Goban
 
 def main(parser):
 
-    print "Camer, video, record"
-    print parser.camera
-    print parser.video
-    print parser.record
-
     cs = CaptureSource()
     gd = gdetect()
 
@@ -101,8 +96,10 @@ def main(parser):
         key = WaitKey(1)
         if key == 27:  # Esc
             break
-    SGFWriter.write(goban.kifu)
-    if parser.igs is not None:
+    if parser.path_sgf:
+        name_file = SGFWriter.write(goban.kifu, parser.path_sgf)
+        print "Save game in %s/%s" % (parser.path_sgf, name_file)
+    if parser.igs:
         igs.close()
 
 if __name__ == "__main__":
@@ -121,6 +118,7 @@ if __name__ == "__main__":
     # FIXME: Possible credential leak via shell history
     replay_arg_group.add_argument('--igs', nargs=2, metavar=('USER', 'PASS'),
         help='Replay game in IGS. Use USER and PASS as login credentials')
+    parser.add_argument('--path_sgf', action='store', help='Path to sgf. ')
 
     results = parser.parse_args()
 

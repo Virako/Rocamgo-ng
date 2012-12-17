@@ -6,9 +6,9 @@ from rocamgo.cte import WHITE, BLACK, __version__
 
 class SGFWriter:
     """ Crea el SGF de una partida a partir de la lista de movimientos. """
+
     @staticmethod
-    def write(game):
-        path = "sgf"
+    def write(game, path="sgf"):
         filename = (str(dt.datetime.now().strftime("%Y-%m-%d %H.%M.%S")) +
             " white vs_black")
         out = os.path.join(path, filename + ".sgf")
@@ -39,3 +39,4 @@ class SGFWriter:
                     f.write("\n;W[%s]" % coord)
             f.write(")")
         f.close
+        return filename
