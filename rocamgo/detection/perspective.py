@@ -47,12 +47,7 @@ def perspective(img, corners):
     """
 
     corners = get_external_corners_prespective_correction(corners)
-    max_edge = get_max_edge(corners)
-    if max_edge < 480:
-        max_edge=480
-    else :
-    # FIXME: possible ShowImage Bug
-        max_edge = max_edge+ 4 - max_edge%4
+    max_edge=480
     # The goban have a relation 15/14 height/width
     # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur
@@ -62,4 +57,4 @@ def perspective(img, corners):
     src = CreateImage((max_edge, max_edge), img.depth, img.nChannels)
     WarpPerspective(img, src, mat)
     return src
-
+import cv
