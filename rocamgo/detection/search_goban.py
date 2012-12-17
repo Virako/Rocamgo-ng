@@ -123,7 +123,9 @@ def detect_contour(img):
         else:
             seq = seq.h_next()
             
-    return contornos[0]
+    if len(contornos):
+        return contornos[0]
+    return None
 
 
 def search_goban(img): 
