@@ -58,10 +58,7 @@ class Goban:
                 cv.Circle(image, pt, radious, cv.CV_RGB(0, 255, 0), 2)
                 stones.append(Move(color, position))
             else:
-                #cv.Line(image, (pt[0]-radious,pt[1]), (pt[0]+radious,pt[1]), cv.CV_RGB(255, 255, 0),1)
-                #cv.Line(image, (pt[0],pt[1]-radious), (pt[0],pt[1]+radious), cv.CV_RGB(255, 255, 0),1)
                 false_stones += 1
-        print "desechados",false_stones
         return image, stones
 
     def search_stones_old(self, image, threshold):
