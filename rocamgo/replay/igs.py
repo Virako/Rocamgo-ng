@@ -42,7 +42,11 @@ class Igs:
         :Type pwd: str """
         # TODO comprobar que se conecta al servidor
         self.s = socket()
-        self.s.connect(('igs.joyjoy.net', 7777))
+        try:
+            self.s.connect(('igs.joyjoy.net', 7777))
+        except:
+            print "Connection problem. Try without --igs or check your network connection. "
+            exit()
         self.s.recv(4096)
         self.s.send("%s\n" %user)
         self.s.recv(4096)
@@ -51,16 +55,16 @@ class Igs:
         self.s.send("teach %d\n" %GOBAN_SIZE)
         self.s.send("title 'Rocamgo'\n")
 
-    
-    def add_stone(self, pos):
-        """Añadimos piedra al servidor. 
 
-        :Param pos: posición de la piedra a añadir 
+    def add_stone(self, pos):
+        """Añadimos piedra al servidor.
+
+        :Param pos: posición de la piedra a añadir
         :Type pos: tuple """
         if pos[0] >= ord('I')-65:
-            pos_igs = chr(pos[0]+66) + str(19-pos[1]) 
+            pos_igs = chr(pos[0]+66) + str(19-pos[1])
         else:
-            pos_igs = chr(pos[0]+65) + str(19-pos[1]) 
+            pos_igs = chr(pos[0]+65) + str(19-pos[1])
         self.s.send("%s\n" %pos_igs)
 
 
