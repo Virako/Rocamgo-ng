@@ -29,23 +29,29 @@
 
 from socket import socket
 from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import WHITE
+from rocamgo.cte import BLACK
 
 
 class Igs:
     """Clase que se comunica con el servidor de IGS. """
     def __init__(self, user='rocamgo', pwd='qwe'):
-        """Inicializamos la conexión con el servidor y creamos un tablero de aprendizaje dentro del servidor para comenzar a subir la partida. 
+        """Inicializamos la conexión con el servidor y creamos un tablero de
+        aprendizaje dentro del servidor para comenzar a subir la partida.
 
         :Param user: usuario que se conectará al servidor
         :Type user: str
         :Param pwd: contraseña del usuario para conetarse al servidor
         :Type pwd: str """
+
+        self.previous_color = WHITE
         # TODO comprobar que se conecta al servidor
         self.s = socket()
         try:
             self.s.connect(('igs.joyjoy.net', 7777))
         except:
-            print "Connection problem. Try without --igs or check your network connection. "
+            print """Connection problem. Try without --igs or check your network
+            connection. """
             exit()
         self.s.recv(4096)
         self.s.send("%s\n" %user)
@@ -56,7 +62,7 @@ class Igs:
         self.s.send("title 'Rocamgo'\n")
 
 
-    def add_stone(self, pos):
+    def add_stone(self, pos, color):
         """Añadimos piedra al servidor.
 
         :Param pos: posición de la piedra a añadir
@@ -65,7 +71,13 @@ class Igs:
             pos_igs = chr(pos[0]+66) + str(19-pos[1])
         else:
             pos_igs = chr(pos[0]+65) + str(19-pos[1])
-        self.s.send("%s\n" %pos_igs)
+        try:
+            if previous_color == color: # Check pass
+                self.s.send("pass\n")
+            self.s.send("%s\n" %pos_igs)
+        except:
+            print "IGS problem. " # TODO
+        self.previous_color = color
 
 
     def close(self):

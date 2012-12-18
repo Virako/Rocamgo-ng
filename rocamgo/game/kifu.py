@@ -17,6 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 from game_info import GameInfo
 
 
@@ -33,7 +34,8 @@ class Kifu:
 
     def attach(self, observer):
         self._observers.append(observer)
-    
+
     def notify(self, stone):
+        """ Notificamos el cambio a los servidores añadidos. """
         for o in self._observers:
-            o.add_stone((stone.x,stone.y))
+            o.add_stone((stone.x,stone.y), stone.color)
