@@ -68,7 +68,6 @@ def main(parser):
     if parser.igs:
         igs = Igs(parser.igs[0], parser.igs[1])
         goban.kifu.attach(igs)
-        # goban.set_igs_connection(igs)
 
     while True:
         # Select image from camera

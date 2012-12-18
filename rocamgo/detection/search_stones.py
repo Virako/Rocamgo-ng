@@ -25,7 +25,7 @@ from cv import CvtColor
 from cv import CV_32FC3
 from cv import CV_HOUGH_GRADIENT
 from cv import HoughCircles
-from cv import Get2D 
+from cv import Get2D
 from cv import CreateMat
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.cte import BLACK
@@ -48,13 +48,15 @@ def search_stones(img, corners, dp=2):
     gray_aux = CloneMat(gray)
     # creo una matriz de para guardar los circulos encontrados
     circles = CreateMat(1, gray_aux.height*gray_aux.width, CV_32FC3)
-    # r es el la mitad del tamaÃ±o de un cuadrado, el radio deseado 
+    # r es el la mitad del tamaño de un cuadrado, el radio deseado
     r = img.width/(GOBAN_SIZE*2)
-    HoughCircles(gray, circles, CV_HOUGH_GRADIENT, dp, int(r*1.8), 250, 25,int(r*0.9), int(r*1.3))
+    HoughCircles(gray, circles, CV_HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
+            int(r*0.7), int(r*1.2))
     return circles
 
 def check_color_stone(pt, radious, img, threshold=190):
-    """Devuelve el color de la piedra dado el centro y el radio de la piedra y una imagen. TambiÃ©n desechamos las piedras que no sean negras o blancas.
+    """Devuelve el color de la piedra dado el centro y el radio de la piedra y
+    una imagen. También desechamos las piedras que no sean negras o blancas.
 
     :Param pt: centro de la piedra
     :Type pt: tuple
@@ -65,12 +67,12 @@ def check_color_stone(pt, radious, img, threshold=190):
     :Param threshold: umbral de blanco
     :Type threshold: int
     :Keyword threshold: 190 cuando hay buena luminosidad """
-    
+
     black_total = 0
     white_total = 0
     no_color = 0
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
-        try: 
+        try:
             pixel = Get2D(img, pt[1], x)[:-1]
         except:
             continue
@@ -91,16 +93,17 @@ def check_color_stone(pt, radious, img, threshold=190):
             black_total += 1
         else:
             no_color += 1
-    
+
     if white_total >= black_total and white_total >= no_color:
         return WHITE
     elif no_color >= black_total and no_color >= white_total:
         return -1
     elif black_total >= white_total and black_total >= no_color:
         return BLACK
-    
+
 def check_color_stone_LaB(pt, radious, img):
-    """Devuelve el color de la piedra dado el centro y el radio de la piedra y una imagen. TambiÃ©n desechamos las piedras que tengan tendencia al color.
+    """Devuelve el color de la piedra dado el centro y el radio de la piedra y
+    una imagen. También desechamos las piedras que tengan tendencia al color.
 
     :Param pt: centro de la piedra
     :Type pt: tuple
@@ -113,7 +116,7 @@ def check_color_stone_LaB(pt, radious, img):
     color = 0
     intensidad=0
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
-        try: 
+        try:
             pixel = Get2D(img, pt[1], x)[:-1]
             #print pt[1], x,"-",pixel
         except:
@@ -127,8 +130,8 @@ def check_color_stone_LaB(pt, radious, img):
                 intensidad+=1
                 color+=1
         else:
-            color+=1   
-            
+            color+=1
+
     if white_total >= black_total and white_total >= color:
         return WHITE
     elif color >= black_total and color >= white_total:

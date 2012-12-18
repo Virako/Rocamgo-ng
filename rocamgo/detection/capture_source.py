@@ -1,5 +1,9 @@
-from cv import QueryFrame, LoadImage, CaptureFromFile, GetCaptureProperty
-from cv import CV_CAP_PROP_FRAME_HEIGHT, CV_CAP_PROP_FRAME_WIDTH
+from cv import QueryFrame
+from cv import LoadImage
+from cv import CaptureFromFile
+from cv import GetCaptureProperty
+from cv import CV_CAP_PROP_FRAME_HEIGHT
+from cv import CV_CAP_PROP_FRAME_WIDTH
 
 from cameras import Cameras
 

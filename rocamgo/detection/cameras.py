@@ -19,7 +19,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-:var cameras: lista de cámaras 
+:var cameras: lista de cámaras
 :Type cameras: list
 :var camera: cámara seleccionada
 :Type camera: Capture
@@ -46,22 +46,22 @@ class Cameras:
         self.camera = None
 
     def on_mouse(self, event, x, y, flags, camera):
-        """Capturador de eventos de click de ratón. 
+        """Capturador de eventos de click de ratón.
 
-        :Param event: Evento capturado.  
+        :Param event: Evento capturado.
         :Type event: int
-        :Param x: posición x del ratón. 
+        :Param x: posición x del ratón.
         :Type x: int
-        :Param y: posición y del ratón. 
+        :Param y: posición y del ratón.
         :Type y: int
-        :Param camera: objeto Capture 
+        :Param camera: objeto Capture
         :Type camera: Capture
         """
-        if event == CV_EVENT_LBUTTONDBLCLK: 
+        if event == CV_EVENT_LBUTTONDBLCLK:
             self.camera = camera
 
     def check_cameras(self, num=MAX_CAMERAS):
-        """Comprueba las cámaras disponibles. 
+        """Comprueba las cámaras disponibles.
 
         :Param num: máximo número de cámaras a comprobar
         :Keyword num: 99 por defecto, ya que en Linux es lo permitido
@@ -70,7 +70,7 @@ class Cameras:
         :Rtype: list of Capture
         """
         n = 0
-        while len(self.cameras) < num and n <= MAX_CAMERAS: 
+        while len(self.cameras) < num and n <= MAX_CAMERAS:
             camera = CaptureFromCAM(n)
             if QueryFrame(camera):
                 self.cameras.append(camera)
@@ -97,7 +97,7 @@ class Cameras:
                     ShowImage(name_windows, img)
                     WaitKey(60)
                     # TODO select camera push the key
-                    SetMouseCallback(name_windows, self.on_mouse, camera) 
+                    SetMouseCallback(name_windows, self.on_mouse, camera)
             DestroyAllWindows()
 
         return self.camera

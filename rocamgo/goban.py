@@ -152,7 +152,6 @@ class Goban:
         """ Agregamos movimiento al tablero y a la lista de movimientos.
         Comprobando anteriormente si ese movimiento es válido. """
         invalid = self.invalid_move(move)
-        print "Intento de añadir piedra"
         if not invalid:
             print "Add", move.x + 1, move.y + 1, move.color
             self.kifu.add_stone(move)

@@ -34,7 +34,7 @@ from functions import get_max_edge
 from functions import get_external_corners_prespective_correction
 
 
-def perspective(img, corners): 
+def perspective(img, corners):
     """Crea una imagen en modelo ideal del tablero dado en perspectiva.
 
     :Param img: imagen con el tablero en perspectiva
@@ -47,7 +47,7 @@ def perspective(img, corners):
     """
 
     corners = get_external_corners_prespective_correction(corners)
-    max_edge=480
+    max_edge = 480
     # The goban have a relation 15/14 height/width
     # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur

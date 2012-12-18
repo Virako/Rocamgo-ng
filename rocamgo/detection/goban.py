@@ -1,17 +1,17 @@
 from copy import copy
-
 import cv
+import math
 
 from rocamgo.detection.search_goban import search_goban
 from rocamgo.detection.check_goban_moved import check_goban_moved
 from rocamgo.detection.perspective import perspective
-from rocamgo.detection.search_stones import check_color_stone, search_stones,check_color_stone_LaB
-
+from rocamgo.detection.search_stones import check_color_stone
+from rocamgo.detection.search_stones import search_stones
+from rocamgo.detection.search_stones import check_color_stone_LaB
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.game.move import Move
-import math
 
 
 class Goban:
@@ -20,7 +20,7 @@ class Goban:
         self._good_corners = None
         self.current_corners = None
         self.search_stones = None
-        self.select_stone_search_algo('LaB')
+        self.select_stone_search_algo('old')
 
     def extract(self, image):
         self._prev_corners = copy(self.current_corners)
@@ -36,10 +36,10 @@ class Goban:
 
     def select_stone_search_algo(self, method):
         self.search_stones = eval("self.search_stones_" + method)
-         
+
     def search_stones_LaB(self,image,th):
-        stones=[]
-        false_stones=0
+        stones = []
+        false_stones = 0
         circles = search_stones(image, None)
         lab_img = cv.CreateImage(cv.GetSize(image), 8, 3)
         cv.CvtColor(image, lab_img, cv.CV_BGR2Lab)
@@ -47,7 +47,7 @@ class Goban:
             pixel = cv.Get1D(circles, n)
             pt = (cv.Round(pixel[0]), cv.Round(pixel[1]))
             radious = cv.Round(pixel[2])
-            color=check_color_stone_LaB(pt, radious, lab_img)
+            color = check_color_stone_LaB(pt, radious, lab_img)
             position = Move.pixel_to_position(image.width, pixel)
             if color == BLACK:
                 # print "BLACK"
@@ -73,17 +73,14 @@ class Goban:
             color = check_color_stone(pt, radious, image, threshold)
             position = Move.pixel_to_position(image.width, pixel)
             if color == BLACK:
-                # print "BLACK"
                 cv.Circle(image, pt, radious, cv.CV_RGB(255, 0, 0), 2)
                 stones.append(Move(color, position))
             elif color == WHITE:
-                # print "WHITE"
                 cv.Circle(image, pt, radious, cv.CV_RGB(0, 255, 0), 2)
                 stones.append(Move(color, position))
             else:
-                # Circle(ideal_img, pt, radious, CV_RGB(255,255,0),2)
+                #cv.Circle(image, pt, radious, cv.CV_RGB(255,255,0), 2)
                 false_stones += 1
-        print "falsas=", false_stones
         return image, stones
 
     def search_stones_mask(self, image, threshold):

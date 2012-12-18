@@ -28,19 +28,20 @@ from math import hypot
 
 
 def is_same_quadrant(v1, v2):
-    """Comprueba si dos vectores pasados por parámetros se encuentran en el mismo cuadrante. 
+    """Comprueba si dos vectores pasados por parámetros se encuentran en el
+    mismo cuadrante.
 
     :Param v1: vector
     :Type v1: tuple
     :Param v2: vector
     :Type v2: tuple
-    :Return: True si se encuentran los vectores en el mismo cuadrante. 
+    :Return: True si se encuentran los vectores en el mismo cuadrante.
     :Rtype: bool """
     return v1[0]*v2[0] >= 0 and v1[1]*v2[1] >= 0
 
 
 def degress_between_two_vectors(v1, v2):
-    """Halla los grados que existen entre dos vectores dados.                     
+    """Halla los grados que existen entre dos vectores dados.
 
     :Param v1: vector
     :Type v1: tuple
@@ -56,7 +57,7 @@ def degress_between_two_vectors(v1, v2):
         v1 = (v1[0]/v1_mod, v1[1]/v1_mod)
         v2 = (v2[0]/v2_mod, v2[1]/v2_mod)
         value = abs(v1[0]*v2[0] + v1[1]*v2[1]) / \
-        (hypot(v1[0], v2[0]) * hypot(v1[1], v2[1])) 
+                (hypot(v1[0], v2[0]) * hypot(v1[1], v2[1]))
         return acos(value)
     except ZeroDivisionError:
         return 0
@@ -65,7 +66,8 @@ def degress_between_two_vectors(v1, v2):
 
 
 def check_directions(directions):
-    """Comprueba si las direcciones entre los 4 vecores de movimiento de los corners del tablego tienen la misma dirección. 
+    """Comprueba si las direcciones entre los 4 vecores de movimiento de los
+    corners del tablego tienen la misma dirección.
 
     :Param directions: lista de vectores directores
     :Type directions: list
@@ -118,4 +120,3 @@ def check_goban_moved(prev_corners, current_corners):
             return False
     else:
         return False
-

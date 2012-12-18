@@ -89,6 +89,6 @@ FEATURES OF FILES .SGF
 * US: User: name of the person who created the SGF file.
 * W: a move by White at the location specified by the property value.
 * WR: White Rank: rank of the White player.
-* WT: White Team: name of the White team. 
+* WT: White Team: name of the White team.
 """
 
