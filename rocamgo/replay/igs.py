@@ -72,7 +72,7 @@ class Igs:
         else:
             pos_igs = chr(pos[0]+65) + str(19-pos[1])
         try:
-            if previous_color == color: # Check pass
+            if self.previous_color == color: # Check pass
                 self.s.send("pass\n")
             self.s.send("%s\n" %pos_igs)
         except:
