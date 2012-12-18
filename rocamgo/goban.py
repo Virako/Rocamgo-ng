@@ -142,22 +142,23 @@ class Goban:
         around_pos = ((-1, 0), (1, 0), (0, -1), (0, 1))
         if not (prev_move.x - move.x, prev_move.y - move.y) in around_pos:
             return False
-        for p in around_pos:
-            try:
-                if self.goban[move.x + p[0]][move.y + p[1]] == move.color:
-                    return False
-            except IndexError: # Stone is in the edge goban
-                pass
-        return True
+        elif self.is_last_liberty(move.pt, move.color) and \
+                self.get_liberties(prev_move.pt, prev_move.color) == [move]:
+            return True
+        else:
+            return False
 
     def add_move(self, move):
         """ Agregamos movimiento al tablero y a la lista de movimientos.
         Comprobando anteriormente si ese movimiento es válido. """
-        print self.invalid_move(move), "MOVE"
-        if not self.invalid_move(move):
-            print "add", move.color
+        invalid = self.invalid_move(move)
+        print "Intento de añadir piedra"
+        if not invalid:
+            print "Add", move.x + 1, move.y + 1, move.color
+            self.kifu.add_stone(move)
             self.goban[move.x][move.y] = move.color
             self.moves.append(move)
+        return invalid
 
     def add_stones_to_statistical(self, stones):
         """Recorremos la lista de piedras pasadas por parámetros para buscar
@@ -175,8 +176,6 @@ class Goban:
             values = self.statistical[st.x][st.y]
             if values[1] <= 0 and values[0] > 0:
                 if not self.goban[st.x][st.y]:
-                    print "Add", st.x + 1, st.y + 1
-                    self.kifu.add_stone(st)
                     self.statistical[st.x][st.y] = [0, 8]
                     self.add_move(st)
 
@@ -186,8 +185,6 @@ class Goban:
             values = self.statistical[st.x][st.y]
             if values[1] <= 0 and values[0] > 0:
                 if not self.goban[st.x][st.y]:
-                    print "Add", st.x + 1, st.y + 1
-                    self.kifu.add_stone(st)
                     self.statistical[st.x][st.y] = [0, 8]
                     self.add_move(st)
             elif values[1] <= 0 and values[0] > 0:
