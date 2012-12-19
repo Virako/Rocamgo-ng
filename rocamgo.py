@@ -92,7 +92,7 @@ def main(parser):
 
         ShowImage("Camera", img)
 
-        key = WaitKey(1)
+        key = WaitKey(30)
         if key == 27:  # Esc
             break
     if parser.path_sgf:
