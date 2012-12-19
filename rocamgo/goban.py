@@ -56,7 +56,7 @@ class Goban:
         # El valor 8 es el nº de veces a buscar antes de hacer la estadística
         self.goban = [[None] * size for i in range(size)]
         self.moves = []
-        self.statistical = [[[0, 8]] * size for i in range(size)]
+        self.statistical = [[10] * size for i in range(size)]
         self.stones = set()
         self.kifu = Kifu()
 
@@ -153,46 +153,28 @@ class Goban:
         Comprobando anteriormente si ese movimiento es válido. """
         invalid = self.invalid_move(move)
         if not invalid:
-            print "Add", move.x + 1, move.y + 1, move.color
             self.kifu.add_stone(move)
             self.goban[move.x][move.y] = move.color
             self.moves.append(move)
         return invalid
 
     def add_stones_to_statistical(self, stones):
-        """Recorremos la lista de piedras pasadas por parámetros para buscar
+        """Recorremos la lista de piedras pasadas por parámetros para
         hacer comprobaciones estadísticas en esas piedras, luego recorremos la
-        lista de piedras guardada y la actualizamos. Actualiza kifu, igs y el
+        lista de piedras guardada y la actualizamos. Actualiza kifu y el
         tablero donde guardamos el estado de las piedras cuando detecta
         estadísticamente que una piedra se ha puesto.
 
         :Param stones: lista de piedras
         :Type stones: list """
-
         for st in stones:
-            self.statistical[st.x][st.y][0] += 1
-            self.statistical[st.x][st.y][1] -= 1
-            values = self.statistical[st.x][st.y]
-            if values[1] <= 0 and values[0] > 0:
-                if not self.goban[st.x][st.y]:
-                    self.statistical[st.x][st.y] = [0, 8]
-                    self.add_move(st)
-
-        for st in self.stones.difference(stones):
-            self.statistical[st.x][st.y][0] -= 1
-            self.statistical[st.x][st.y][1] -= 1
-            values = self.statistical[st.x][st.y]
-            if values[1] <= 0 and values[0] > 0:
-                if not self.goban[st.x][st.y]:
-                    self.statistical[st.x][st.y] = [0, 8]
-                    self.add_move(st)
-            elif values[1] <= 0 and values[0] > 0:
-                self.statistical[st.x][st.y] = [0, 8]
-                if self.goban[st.x][st.y]:
-                    print "Piedra %d, %d quitada?." % (st.x, st.y)
-                    # TODO comprobar piedras capturadas
-                # falsa piedra
-        self.stones.update(stones)
+            if self.goban[st.x][st.y] or st not in self.stones:
+                continue
+            self.statistical[st.x][st.y] -= 1
+            if self.statistical[st.x][st.y] <= 0:
+                self.statistical[st.x][st.y] = 10
+                self.add_move(st)
+        self.stones = set(stones)
 
     def print_st(self):
         string = ""
