@@ -52,8 +52,14 @@ class Kifu:
     def notify(self, stone):
         """ Notificamos el cambio a los servidores añadidos. """
         if stone.color == BLACK:
-            print "B(%d, %d)" % (stone.x, stone.y)
+            try:
+                print "B(%d, %d)" % (stone.x, stone.y)
+            except TypeError:
+                print "B()"
         else:
-            print "W(%d, %d)" % (stone.x, stone.y)
+            try:
+                print "W(%d, %d)" % (stone.x, stone.y)
+            except TypeError:
+                print "W()"
         for o in self._observers:
             o.add_stone(stone.pt)
