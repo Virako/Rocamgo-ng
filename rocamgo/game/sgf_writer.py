@@ -32,7 +32,10 @@ class SGFWriter:
             # TODO: Get proper values from game information
             f.writelines(header)
             for m in game.move_list:
-                coord = chr(m.x + 97) + chr(m.y + 97)
+                if m.pt == (None, None):
+                    coord = ""
+                else:
+                    coord = chr(m.x + 97) + chr(m.y + 97)
                 if m.color == BLACK:
                     f.write("\n;B[%s]" % coord)
                 elif m.color == WHITE:

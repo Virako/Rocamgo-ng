@@ -21,15 +21,9 @@
 
 from cv import GetPerspectiveTransform
 from cv import WarpPerspective
-#from cv import Canny
-#from cv import Smooth
 from cv import CreateMat
 from cv import CV_32FC1
-#from cv import CV_RGB2GRAY
 from cv import CreateImage
-#from cv import IPL_DEPTH_8U
-#from cv import CvtColor
-#from cv import GetMat
 from functions import get_max_edge
 from functions import get_external_corners_prespective_correction
 
@@ -57,4 +51,3 @@ def perspective(img, corners):
     src = CreateImage((max_edge, max_edge), img.depth, img.nChannels)
     WarpPerspective(img, src, mat)
     return src
-import cv

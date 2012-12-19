@@ -19,6 +19,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from game_info import GameInfo
+from rocamgo.cte import BLACK
+from rocamgo.cte import WHITE
+from rocamgo.game.move import Move
 
 
 class Kifu:
@@ -27,15 +30,30 @@ class Kifu:
         self.move_list = []
         self._observers = []
         self.info = GameInfo()
+        self.previous_color = WHITE
 
     def add_stone(self, stone):
+        if stone.color == self.previous_color:
+            if stone.color == BLACK:
+                stone_pass = Move(WHITE, (None, None))
+            elif stone.color == WHITE:
+                stone_pass = Move(BLACK, (None, None))
+            else:
+                print "Error: stone's color invalid"
+            self.move_list.append(stone_pass)
+            self.notify(stone_pass)
         self.move_list.append(stone)
         self.notify(stone)
+        self.previous_color = stone.color
 
     def attach(self, observer):
         self._observers.append(observer)
 
     def notify(self, stone):
         """ Notificamos el cambio a los servidores añadidos. """
+        if stone.color == BLACK:
+            print "B(%d, %d)" % (stone.x, stone.y)
+        else:
+            print "W(%d, %d)" % (stone.x, stone.y)
         for o in self._observers:
-            o.add_stone((stone.x,stone.y), stone.color)
+            o.add_stone(stone.pt)

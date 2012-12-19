@@ -48,7 +48,7 @@ from rocamgo.cte import MIN_BOARD_AREA
 from rocamgo.cte import MAX_POLY_APPROX_ERROR
 
 def count_perimeter(seq):
-    """Contamos el perímetro de una secuencia dada. 
+    """Contamos el perímetro de una secuencia dada.
 
     :Param seq: secuencia de puntos
     :Type seq: CvSeq
@@ -86,7 +86,7 @@ def get_corners(contour):
 
 
 def filter_image(img):
-    """Aplicamos unos filtros a las imágenes para facilitar su tratamiento. Buscamos contornos y suavizamos. 
+    """Aplicamos unos filtros a las imágenes para facilitar su tratamiento. Buscamos contornos y suavizamos.
 
     :Param img: imagen sin filtrar
     :Type img: CvMat
@@ -100,14 +100,14 @@ def filter_image(img):
 
 
 def detect_contour(img):
-    """Buscamos contornos con unas características determinadas para encontrar un tablero de go en una imagen. 
+    """Buscamos contornos con unas características determinadas para encontrar un tablero de go en una imagen.
 
     :Param img: imagen filtrada para buscar contornos en ella
     :Type img: CvMat
     :Return: Contorno si no lo encuentra, sino None
     :Rtype: CvSeq """
     storage = CreateMemStorage()
-    seq = FindContours(img, storage, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE, 
+    seq = FindContours(img, storage, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE,
       offset=(0, 0))
     contornos=[]
     while seq:
@@ -122,14 +122,14 @@ def detect_contour(img):
             break
         else:
             seq = seq.h_next()
-            
+
     if len(contornos):
         return contornos[0]
     return None
 
 
-def search_goban(img): 
-    """Busca el tablero en una imagen. 
+def search_goban(img):
+    """Busca el tablero en una imagen.
 
     :Param img: imagen del tablero
     :Type img: IplImage # TODO comprobar tipo imagen
@@ -141,7 +141,7 @@ def search_goban(img):
     AdaptiveThreshold(img_gray, img_gray, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY_INV,7)
     #img_filtered = filter_image(img_gray)
     contour = detect_contour(img_gray)
-    if contour: 
+    if contour:
         return get_corners(contour)
     else:
         return None
