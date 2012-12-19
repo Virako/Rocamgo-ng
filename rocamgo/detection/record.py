@@ -22,44 +22,44 @@ from cv import CreateVideoWriter
 from cv import WriteFrame
 from cv import CV_FOURCC
 
+from rocamgo.cte import FPS
+
 
 class Record:
     """ Grabar video de la partida para enviar al desarrollador y poder ayudarlo
     a mejorar el programa. """
     def __init__(self, filename, resolution):
         """
-        :Param filename: Nombre del archivo del video.  
+        :Param filename: Nombre del archivo del video.
         :Type filename: str
         """
-        FPS = 8
         # MJPG = 1196444237 # CV_FOURCC('M','J','P','G')
-        # MPEG_1 = CV_FOURCC('P','I','M','1') 
-        # motion_jpeg = CV_FOURCC('M','J','P','G') 
-        # MPEG_42 = CV_FOURCC('M','P','4','2') 
-        # MPEG_43 = CV_FOURCC('D','I','V','3') 
-        # MPEG_4 = CV_FOURCC('D','I','V','X') 
-        # H263 = CV_FOURCC('U','2','6','3') 
-        # H263I = CV_FOURCC('I','2','6','3') 
-        FLV1 = CV_FOURCC('D','I','V','X') 
+        # MPEG_1 = CV_FOURCC('P','I','M','1')
+        # motion_jpeg = CV_FOURCC('M','J','P','G')
+        # MPEG_42 = CV_FOURCC('M','P','4','2')
+        # MPEG_43 = CV_FOURCC('D','I','V','3')
+        # MPEG_4 = CV_FOURCC('D','I','V','X')
+        # H263 = CV_FOURCC('U','2','6','3')
+        # H263I = CV_FOURCC('I','2','6','3')
+        FLV1 = CV_FOURCC('D','I','V','X')
         # TODO: Correctly set FPS
         self.video = CreateVideoWriter(filename, FLV1, FPS, resolution)
-        print "SELFFFF", self.video
         self.frame = 0
 
     def add_frame(self, frame):
-        """ 
+        """
         :Param frame: Frame del video
         :Type frame: iplimage
         """
         self.frame += 1
         WriteFrame(self.video, frame)
-#        print "WriteFrame -->", add
+        # print "WriteFrame -->", add
 
     def part_video(self, first_frame, last_frame):
         """ Dado dos frames, obtener el video que se encuentre entre ambos.
         :Param first_frame: Frame donde comenzará el video.
-        :Type first_frame: int 
-        :Param last_frame: Frame donde finalizará el video. 
+        :Type first_frame: int
+        :Param last_frame: Frame donde finalizará el video.
         :Type last_frame: int
         """
         pass #TODO

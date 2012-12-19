@@ -39,6 +39,7 @@ from cv import WaitKey
 from cv import Circle
 
 from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import FPS
 from rocamgo.cte import __version__
 from rocamgo.detection.capture_source import CaptureSource
 from rocamgo.detection.goban import Goban as gdetect
@@ -92,7 +93,7 @@ def main(parser):
 
         ShowImage("Camera", img)
 
-        key = WaitKey(30)
+        key = WaitKey(FPS)
         if key == 27:  # Esc
             break
     if parser.path_sgf:

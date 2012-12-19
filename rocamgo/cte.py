@@ -51,6 +51,7 @@ MAX_CAMERAS = 99
 GOBAN_SIZE = 19
 BLACK = 1
 WHITE = 2
+FPS = 30
 __version__ = "Rocamgo 0.33"
 
 
