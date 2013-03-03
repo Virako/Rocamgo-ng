@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Rocamgo is recogniter of the go games by processing digital images with opencv.
+# Rocamgo is recogniter of the go games by processing digital images with 
+# opencv.
 # Copyright (C) 2012 Víctor Ramirez de la Corte <virako.9 at gmail dot com>
 # Copyright (C) 2012 David Medina Velasco <cuidadoconeltecho at gmail dot com>
 #
@@ -25,15 +26,18 @@
 :Type camera: Capture
 """
 
-from cv import DestroyAllWindows
 from cv import ShowImage
 from cv import WaitKey
 from cv import SetMouseCallback
 from cv import CV_EVENT_LBUTTONDBLCLK
 from cv import CaptureFromCAM
 from cv import QueryFrame
+from cv import DestroyWindow
+from cv import NamedWindow
+import sys
 
 from rocamgo.cte import MAX_CAMERAS
+
 
 class Cameras:
     """Clase para abrir las cámaras disponibles en el ordenador. """
@@ -44,6 +48,12 @@ class Cameras:
         #cam.capture = CreateFileCapture("http://192.168.1.2:5143/mjpeg")
         self.cameras = []
         self.camera = None
+        if sys.platform == 'linux2':
+            self.check_cameras = self.check_cameras_linux
+        elif sys.platform == 'win32':
+            self.check_cameras = self.check_cameras_windows
+        else:
+            raise NotImplementedError()
 
     def on_mouse(self, event, x, y, flags, camera):
         """Capturador de eventos de click de ratón.
@@ -58,9 +68,9 @@ class Cameras:
         :Type camera: Capture
         """
         if event == CV_EVENT_LBUTTONDBLCLK:
-            self.camera = camera
+            self.camera = self.cameras[camera]
 
-    def check_cameras(self, num=MAX_CAMERAS):
+    def check_cameras_linux(self, num=MAX_CAMERAS):
         """Comprueba las cámaras disponibles.
 
         :Param num: máximo número de cámaras a comprobar
@@ -76,12 +86,51 @@ class Cameras:
                 self.cameras.append(camera)
             n += 1
         if num != MAX_CAMERAS and len(self.cameras) != num:
-            print "Found %d of %d cameras. " %(len(self.cameras), num)
+            print "Found %d of %d cameras. " % (len(self.cameras), num)
             exit()
         return len(self.cameras)
 
+    def check_cameras_windows(self, num=MAX_CAMERAS):
+        """Comprueba las cámaras disponibles.
+
+        :Param num: máximo número de cámaras a comprobar
+        :Keyword num: 99 por defecto, ya que en Linux es lo permitido
+        :Param num: int
+        :Return: lista de cámaras disponibles
+        :Rtype: list of Capture
+        """
+        n = 0
+        ierror = 0
+        camList = []
+        while len(camList) < num and n <= MAX_CAMERAS:
+            camList.append(CaptureFromCAM(n))
+            n += 1
+        n = 0
+        while n < num and n <= MAX_CAMERAS:
+            frame = QueryFrame(camList[n])
+            if frame and frame.height:
+                camList[n] = None
+            else:
+                ierror += 1  # antes de salir debemos borrar todas las cams
+            n += 1
+        if ierror:
+            self.cameras = None
+            print "Found %d of %d cameras. " % (num - ierror, num)
+            exit()
+            # return None     #cámaras repetidas
+        n = 0
+        while len(self.cameras) < num and n <= MAX_CAMERAS:
+            self.cameras.append(CaptureFromCAM(n))
+            n += 1
+        if num != MAX_CAMERAS and len(self.cameras) != num:
+            print "Found %d of %d cameras. " % (len(self.cameras), num)
+            exit()
+            # return None
+        return len(self.cameras)
+
     def show_and_select_camera(self):
-        """Muestra las cámaras disponibles en ventanas y da la opción de seleccionar una de ellas pulsando doble click.
+        """Muestra las cámaras disponibles en ventanas y da la opción de
+        seleccionar una de ellas pulsando doble click.
 
         :Return: cámara seleccionada
         :Rtype: Camera """
@@ -90,15 +139,17 @@ class Cameras:
         elif len(self.cameras) == 1:
             return self.cameras[0]
         elif len(self.cameras) > 1:
+            for i in range(len(self.cameras)):
+                NamedWindow(str(i))
+                SetMouseCallback(str(i), self.on_mouse, i)
             while not self.camera:
-                for camera in self.cameras:
-                    name_windows = camera.__str__()
-                    img = QueryFrame(camera)
-                    ShowImage(name_windows, img)
-                    WaitKey(60)
-                    # TODO select camera push the key
-                    SetMouseCallback(name_windows, self.on_mouse, camera)
-            DestroyAllWindows()
-
+                for i in range(len(self.cameras)):
+                    img = QueryFrame(self.cameras[i])
+                    ShowImage(str(i), img)
+                    WaitKey(1)
+            for i in range(len(self.cameras)):
+                DestroyWindow(str(i))
+            for i in range(len(self.cameras)):
+                if self.cameras[i] != self.camera:
+                    self.cameras[i] = None
         return self.camera
-
