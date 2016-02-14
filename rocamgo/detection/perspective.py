@@ -19,11 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from cv import GetPerspectiveTransform
-from cv import WarpPerspective
-from cv import CreateMat
-from cv import CV_32FC1
-from cv import CreateImage
+import numpy as np
+from cv2 import getPerspectiveTransform
+from cv2 import warpPerspective
+from cv2 import CV_32FC1
+
 from functions import get_max_edge
 from functions import get_external_corners_prespective_correction
 
@@ -46,8 +46,10 @@ def perspective(img, corners):
     # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur
     corners_transf = ((0,0),(0,max_edge),(max_edge,0),(max_edge,max_edge))
-    mat = CreateMat(3, 3, CV_32FC1)
-    GetPerspectiveTransform( corners, corners_transf, mat)
-    src = CreateImage((max_edge, max_edge), img.depth, img.nChannels)
-    WarpPerspective(img, src, mat)
+    #mat = CreateMat(3, 3, CV_32FC1) before
+    mat = np.zeros((3, 3), np.uint8)
+    getPerspectiveTransform( corners, corners_transf, mat)
+    #src = CreateImage((max_edge, max_edge), img.depth, img.nChannels) before
+    src = np.zeros((max_edge, max_edge), np.uint8)
+    warpPerspective(img, src, mat)
     return src

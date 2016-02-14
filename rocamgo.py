@@ -34,9 +34,9 @@
 """
 import argparse
 
-from cv import ShowImage
-from cv import WaitKey
-from cv import Circle
+from cv2 import imshow
+from cv2 import waitKey
+from cv2 import circle
 
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.cte import FPS
@@ -82,23 +82,23 @@ def main(parser):
         if good_corners:
             # Paint corners for tested
             for corner in good_corners:
-                Circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
+                circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
 
         if ideal_img:
             ideal_img, stones = gd.search_stones(ideal_img, threshold)
             # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
 
-            ShowImage("Ideal", ideal_img)
+            imshow("Ideal", ideal_img)
 
-        ShowImage("Camera", img)
+        imshow("Camera", img)
 
-        key = WaitKey(FPS)
+        key = waitKey(FPS)
         if key == 27:  # Esc
             break
     if parser.path_sgf:
         name_file = SGFWriter.write(goban.kifu, parser.path_sgf)
-        print "Save game in %s/%s" % (parser.path_sgf, name_file)
+        print("Save game in %s/%s" % (parser.path_sgf, name_file))
     if parser.igs:
         igs.close()
 

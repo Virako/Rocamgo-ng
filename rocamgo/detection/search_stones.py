@@ -18,15 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from cv import CV_8UC1
-from cv import CV_BGR2GRAY
-from cv import CloneMat
-from cv import CvtColor
-from cv import CV_32FC3
-from cv import CV_HOUGH_GRADIENT
-from cv import HoughCircles
-from cv import Get2D
-from cv import CreateMat
+from cv2 import CV_8UC1
+from cv2 import COLOR_BGR2GRAY
+from cv2 import cvtColor
+from cv2 import CV_32FC3
+from cv2 import HOUGH_GRADIENT
+from cv2 import HoughCircles
+from cv2 import Get2D
+from cv2 import CreateMat
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
@@ -44,13 +43,13 @@ def search_stones(img, corners, dp=2):
     :Type dp: int
     :Keyword dp: 2 era el valor que mejor funcionaba. Prueba y error """
     gray = CreateMat(img.width, img.height,CV_8UC1)
-    CvtColor(img, gray, CV_BGR2GRAY)
-    gray_aux = CloneMat(gray)
+    cvtColor(img, gray, COLOR_BGR2GRAY)
+    gray_aux = gray.clone()
     # creo una matriz de para guardar los circulos encontrados
     circles = CreateMat(1, gray_aux.height*gray_aux.width, CV_32FC3)
     # r es el la mitad del tamaño de un cuadrado, el radio deseado
     r = img.width/(GOBAN_SIZE*2)
-    HoughCircles(gray, circles, CV_HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
+    HoughCircles(gray, circles, HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
             int(r*0.7), int(r*1.2))
     return circles
 
@@ -118,7 +117,7 @@ def check_color_stone_LaB(pt, radious, img):
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
         try:
             pixel = Get2D(img, pt[1], x)[:-1]
-            #print pt[1], x,"-",pixel
+            #print(pt[1], x,"-",pixel)
         except:
             continue
         if 114<pixel[1]<140 and 114<pixel[2]<140:

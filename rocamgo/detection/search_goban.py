@@ -19,33 +19,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from cv import Canny
-from cv import Smooth
-from cv import CreateMat
-from cv import CreateMemStorage
-from cv import CreateImage
-from cv import FindContours
-from cv import CV_RETR_CCOMP
-from cv import CV_CHAIN_APPROX_NONE
-from cv import CV_POLY_APPROX_DP
-from cv import CV_RGB2GRAY
-from cv import ContourArea
-from cv import IPL_DEPTH_8U
-from cv import CvtColor
-from cv import GetMat
-from cv import CV_GAUSSIAN
-from cv import ApproxPoly
-from cv import ArcLength
-from cv import AdaptiveThreshold
-from cv import CV_ADAPTIVE_THRESH_MEAN_C
-from cv import CV_THRESH_BINARY_INV
+import numpy as np
+from cv2 import (
+        ADAPTIVE_THRESH_MEAN_C,
+        CHAIN_APPROX_NONE,
+        COLOR_RGB2GRAY,
+        Canny,
+        RETR_CCOMP,
+        THRESH_BINARY_INV,
+        adaptiveThreshold,
+        approxPolyDP,
+        arcLength,
+        contourArea,
+        contourArea,
+        cvtColor,
+        findContours,
+        medianBlur,
+)
 from math import sqrt
-from rocamgo.cte import NUM_EDGES
-from rocamgo.cte import MAX_BOARD_PERIMETER
-from rocamgo.cte import MIN_BOARD_PERIMETER
-from rocamgo.cte import MAX_BOARD_AREA
-from rocamgo.cte import MIN_BOARD_AREA
-from rocamgo.cte import MAX_POLY_APPROX_ERROR
+from rocamgo.cte import (
+        MAX_BOARD_AREA,
+        MAX_BOARD_PERIMETER,
+        MAX_POLY_APPROX_ERROR,
+        MIN_BOARD_AREA,
+        MIN_BOARD_PERIMETER,
+        NUM_EDGES,
+)
+
 
 def count_perimeter(seq):
     """Contamos el perímetro de una secuencia dada.
@@ -92,10 +92,11 @@ def filter_image(img):
     :Type img: CvMat
     :Return: imagen filtrada
     :Rtype: CvMat """
-    aux_1 = CreateMat(img.rows, img.cols, img.type)
-    aux_2 = CreateMat(img.rows, img.cols, img.type)
+    aux_1 = np.zeros((img.rows, img.cols), np.uint8)
+    aux_2 = np.zeros((img.rows, img.cols), np.uint8)
     Canny(img, aux_2, 50, 200, 3)
-    Smooth(aux_2, aux_1, CV_GAUSSIAN, 1, 3)
+    #Smooth(aux_2, aux_1, CV_GAUSSIAN, 1, 3) # The function is now obsolete. Use GaussianBlur(), blur(), medianBlur() or bilateralFilter().
+    medianBlur(aux_2, aux_1, 1, 3)
     return aux_1
 
 
@@ -106,16 +107,14 @@ def detect_contour(img):
     :Type img: CvMat
     :Return: Contorno si no lo encuentra, sino None
     :Rtype: CvSeq """
-    storage = CreateMemStorage()
-    seq = FindContours(img, storage, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE,
-      offset=(0, 0))
+    seq = findContours(img, RETR_CCOMP, CHAIN_APPROX_NONE, offset=(0, 0))
     contornos=[]
     while seq:
         if len(seq) >= NUM_EDGES and \
-            ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > ArcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
-            (img.cols*img.rows)*MAX_BOARD_AREA > ContourArea(seq) > ((img.cols*img.rows)*MIN_BOARD_AREA):
-            perimeter = ArcLength(seq)
-            seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*MAX_POLY_APPROX_ERROR, 1)
+            ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > arcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
+            (img.cols*img.rows)*MAX_BOARD_AREA > contourArea(seq) > ((img.cols*img.rows)*MIN_BOARD_AREA):
+            perimeter = arcLength(seq)
+            seq_app = approxPolyDP(seq, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 contornos.append(seq_app)
         if seq.h_next() == None:
@@ -135,10 +134,11 @@ def search_goban(img):
     :Type img: IplImage # TODO comprobar tipo imagen
     :Return: lista de esquinas si las encuentra, sino None
     :Rtype: list or None """
-    aux_gray = CreateImage((img.width, img.height), IPL_DEPTH_8U, 1)
-    CvtColor(img, aux_gray, CV_RGB2GRAY)
-    img_gray = GetMat(aux_gray, 0)
-    AdaptiveThreshold(img_gray, img_gray, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY_INV,7)
+    aux_gray = np.zeros((img.width, img.height), np.uint8)
+    cvtColor(img, aux_gray, COLOR_RGB2GRAY)
+    #img_gray = GetMat(aux_gray, 0)
+    img_gray = aux_gray.clone()
+    adaptiveThreshold(img_gray, img_gray, 255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,7)
     #img_filtered = filter_image(img_gray)
     contour = detect_contour(img_gray)
     if contour:

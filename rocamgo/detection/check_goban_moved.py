@@ -62,7 +62,7 @@ def degress_between_two_vectors(v1, v2):
     except ZeroDivisionError:
         return 0
     except ValueError:
-        print "ValueError" # TODO
+        print("ValueError")
 
 
 def check_directions(directions):
