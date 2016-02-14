@@ -72,8 +72,8 @@ def main(parser):
 
     while True:
         # Select image from camera
-        img = cs.get_frame()
-        if not img:
+        retval, img = cs.get_frame()
+        if not retval:
             break
         if parser.record:
             record.add_frame(img)

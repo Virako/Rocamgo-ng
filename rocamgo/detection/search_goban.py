@@ -107,21 +107,18 @@ def detect_contour(img):
     :Type img: CvMat
     :Return: Contorno si no lo encuentra, sino None
     :Rtype: CvSeq """
-    seq = findContours(img, RETR_CCOMP, CHAIN_APPROX_NONE, offset=(0, 0))
+    retimg, contours, hier = findContours(img, RETR_CCOMP, CHAIN_APPROX_NONE, offset=(0, 0))
     contornos=[]
-    while seq:
-        if len(seq) >= NUM_EDGES and \
-            ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > arcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
-            (img.cols*img.rows)*MAX_BOARD_AREA > contourArea(seq) > ((img.cols*img.rows)*MIN_BOARD_AREA):
-            perimeter = arcLength(seq)
-            seq_app = approxPolyDP(seq, perimeter*MAX_POLY_APPROX_ERROR, 1)
+    imrow = img.shape[0]
+    imcol = img.shape[1]
+    for contour in contours:
+        if len(contour) >= NUM_EDGES and \
+                ((imcol*2 + imrow*2) * MAX_BOARD_PERIMETER) > arcLength(contour,False) > ((imcol*2 + imrow*2) * MIN_BOARD_PERIMETER)  and \
+                (imcol * imrow) * MAX_BOARD_AREA > contourArea(contour) > ((imcol * imrow) * MIN_BOARD_AREA):
+            perimeter = arcLength(contour)
+            seq_app = approxPolyDP(contour, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 contornos.append(seq_app)
-        if seq.h_next() == None:
-            break
-        else:
-            seq = seq.h_next()
-
     if len(contornos):
         return contornos[0]
     return None
@@ -134,11 +131,12 @@ def search_goban(img):
     :Type img: IplImage # TODO comprobar tipo imagen
     :Return: lista de esquinas si las encuentra, sino None
     :Rtype: list or None """
-    aux_gray = np.zeros((img.width, img.height), np.uint8)
-    cvtColor(img, aux_gray, COLOR_RGB2GRAY)
+    aux_gray = np.zeros(img.shape[:2])
+    aux_gray = cvtColor(img, COLOR_RGB2GRAY)
     #img_gray = GetMat(aux_gray, 0)
-    img_gray = aux_gray.clone()
-    adaptiveThreshold(img_gray, img_gray, 255,ADAPTIVE_THRESH_MEAN_C,THRESH_BINARY_INV,7)
+    img_gray = aux_gray.copy()
+    img_gray = adaptiveThreshold(img_gray, 255, ADAPTIVE_THRESH_MEAN_C,
+            THRESH_BINARY_INV, 7, 2)
     #img_filtered = filter_image(img_gray)
     contour = detect_contour(img_gray)
     if contour:

@@ -29,6 +29,6 @@ class CaptureSource:
 
     def get_frame(self):
         if self._video:
-            frame, img = self._video.read()
-            return frame
-        return imread(self._image)
+            retval, frame = self._video.read()
+            return retval, frame
+        return True, imread(self._image)

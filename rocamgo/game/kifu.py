@@ -18,9 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from game_info import GameInfo
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
+from rocamgo.game.game_info import GameInfo
 from rocamgo.game.move import Move
 
 

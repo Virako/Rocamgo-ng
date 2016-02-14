@@ -18,13 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rocamgo.cte import NUM_EDGES
-from rocamgo.cte import GOBAN_SIZE
-from functions import distance_between_two_points as distance
-from functions import direction_between_two_points as direction
-from functions import get_max_edge
 from math import acos
 from math import hypot
+
+from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import NUM_EDGES
+from rocamgo.detection.functions import direction_between_two_points as direction
+from rocamgo.detection.functions import distance_between_two_points as distance
+from rocamgo.detection.functions import get_max_edge
 
 
 def is_same_quadrant(v1, v2):

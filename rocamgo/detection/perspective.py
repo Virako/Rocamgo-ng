@@ -20,12 +20,12 @@
 
 
 import numpy as np
+from cv2 import CV_32FC1
 from cv2 import getPerspectiveTransform
 from cv2 import warpPerspective
-from cv2 import CV_32FC1
 
-from functions import get_max_edge
-from functions import get_external_corners_prespective_correction
+from rocamgo.detection.functions import get_external_corners_prespective_correction
+from rocamgo.detection.functions import get_max_edge
 
 
 def perspective(img, corners):

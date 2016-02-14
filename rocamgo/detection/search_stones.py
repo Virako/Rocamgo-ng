@@ -18,14 +18,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy as np
 from cv2 import CV_8UC1
 from cv2 import COLOR_BGR2GRAY
 from cv2 import cvtColor
 from cv2 import CV_32FC3
 from cv2 import HOUGH_GRADIENT
 from cv2 import HoughCircles
-from cv2 import Get2D
-from cv2 import CreateMat
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
@@ -42,11 +41,12 @@ def search_stones(img, corners, dp=2):
     :Param dp: profundidad de bÃºsqueda de cÃ­rculos
     :Type dp: int
     :Keyword dp: 2 era el valor que mejor funcionaba. Prueba y error """
-    gray = CreateMat(img.width, img.height,CV_8UC1)
+    gray = np.zeros((img.width, img.height), np.uint8)
     cvtColor(img, gray, COLOR_BGR2GRAY)
     gray_aux = gray.clone()
     # creo una matriz de para guardar los circulos encontrados
-    circles = CreateMat(1, gray_aux.height*gray_aux.width, CV_32FC3)
+    # circles = CreateMat(1, gray_aux.height*gray_aux.width, CV_32FC3) before
+    circles = np.zeros((1, gray_aux.height*gray_aux.width), np.uint8)
     # r es el la mitad del tamaño de un cuadrado, el radio deseado
     r = img.width/(GOBAN_SIZE*2)
     HoughCircles(gray, circles, HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
@@ -72,7 +72,7 @@ def check_color_stone(pt, radious, img, threshold=190):
     no_color = 0
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
         try:
-            pixel = Get2D(img, pt[1], x)[:-1]
+            pixel = img.at(pt[1], x)[:-1]
         except:
             continue
         if all(p > threshold for p in pixel):
@@ -83,7 +83,7 @@ def check_color_stone(pt, radious, img, threshold=190):
             no_color += 1
     for y in range(pt[1] - radious/2, pt[1] + radious/2):
         try:
-            pixel = Get2D(img, y, pt[0])
+            pixel = img.at(y, pt[0])
         except:
             continue
         if all(p > threshold for p in pixel):
@@ -116,7 +116,7 @@ def check_color_stone_LaB(pt, radious, img):
     intensidad=0
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
         try:
-            pixel = Get2D(img, pt[1], x)[:-1]
+            pixel = img.at(pt[1], x)[:-1]
             #print(pt[1], x,"-",pixel)
         except:
             continue

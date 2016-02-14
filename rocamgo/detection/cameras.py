@@ -47,7 +47,7 @@ class Cameras:
         #cam.capture = CreateFileCapture("http://192.168.1.2:5143/mjpeg")
         self.cameras = []
         self.camera = None
-        if sys.platform == 'linux2':
+        if sys.platform == 'linux':
             self.check_cameras = self.check_cameras_linux
         elif sys.platform == 'win32':
             self.check_cameras = self.check_cameras_windows
@@ -81,8 +81,8 @@ class Cameras:
         n = 0
         while len(self.cameras) < num and n <= MAX_CAMERAS:
             camera = VideoCapture(n)
-            result, img = camera.read()
-            if result:
+            retval, frame = camera.read()
+            if retval:
                 self.cameras.append(camera)
             n += 1
         if num != MAX_CAMERAS and len(self.cameras) != num:
@@ -107,7 +107,7 @@ class Cameras:
             n += 1
         n = 0
         while n < num and n <= MAX_CAMERAS:
-            frame, img = camList[n].read()
+            retval, frame = camList[n].read()
             if frame and frame.height:
                 camList[n] = None
             else:
@@ -144,7 +144,7 @@ class Cameras:
                 setMouseCallback(str(i), self.on_mouse, i)
             while not self.camera:
                 for i in range(len(self.cameras)):
-                    img, img2 = self.cameras[i].read()
+                    retval, img = self.cameras[i].read()
                     imshow(str(i), img)
                     waitKey(1)
             for i in range(len(self.cameras)):
