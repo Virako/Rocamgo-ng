@@ -19,19 +19,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
-from cv2 import CV_8UC1
-from cv2 import COLOR_BGR2GRAY
-from cv2 import cvtColor
-from cv2 import CV_32FC3
-from cv2 import HOUGH_GRADIENT
-from cv2 import HoughCircles
-from rocamgo.cte import GOBAN_SIZE
-from rocamgo.cte import BLACK
-from rocamgo.cte import WHITE
+from cv2 import (
+        COLOR_BGR2GRAY,
+        CV_32FC3,
+        CV_8UC1,
+        HOUGH_GRADIENT,
+        HoughCircles,
+        cvtColor,
+        medianBlur
+)
+
+from rocamgo.cte import (
+        BLACK,
+        GOBAN_SIZE,
+        WHITE,
+)
 
 
-
-def search_stones(img, corners, dp=2):
+def search_stones(img, blur=17, dp=2):
     """Devuelve las circunferencias encontradas en una imagen.
 
     :Param img: imagen donde buscaremos las circunferencias
@@ -42,10 +47,11 @@ def search_stones(img, corners, dp=2):
     :Type dp: int
     :Keyword dp: 2 era el valor que mejor funcionaba. Prueba y error """
     gray = cvtColor(img, COLOR_BGR2GRAY)
+    gray2 = medianBlur(gray, blur)
     # r es el la mitad del tamaño de un cuadrado, el radio deseado
-    r = img.shape[0]/(GOBAN_SIZE*2)
-    circles = HoughCircles(gray, HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
-            int(r*0.7), int(r*1.2))
+    r = (img.shape[0] / GOBAN_SIZE) / 2
+    circles = HoughCircles(gray2, HOUGH_GRADIENT, dp, int(r*0.5), param1=50,
+            param2=30, minRadius=int(r*0.7), maxRadius=int(r*1.2))
     return circles
 
 def check_color_stone(pt, radious, img, threshold=190):
@@ -67,7 +73,7 @@ def check_color_stone(pt, radious, img, threshold=190):
     no_color = 0
     for x in range(int(pt[0] - radious/2), int(pt[0] + radious/2)):
         try:
-            pixel = img.at(pt[1], x)[:-1]
+            pixel = img[pt[1]][x]
         except:
             continue
         if all(p > threshold for p in pixel):
@@ -78,7 +84,7 @@ def check_color_stone(pt, radious, img, threshold=190):
             no_color += 1
     for y in range(int(pt[1] - radious/2), int(pt[1] + radious/2)):
         try:
-            pixel = img.at(y, pt[0])
+            pixel = img[y][pt[0]]
         except:
             continue
         if all(p > threshold for p in pixel):
@@ -111,8 +117,7 @@ def check_color_stone_LaB(pt, radious, img):
     intensidad=0
     for x in range(pt[0] - radious/2, pt[0] + radious/2):
         try:
-            pixel = img.at(pt[1], x)[:-1]
-            #print(pt[1], x,"-",pixel)
+            pixel = img[pt[1]][x]
         except:
             continue
         if 114<pixel[1]<140 and 114<pixel[2]<140:

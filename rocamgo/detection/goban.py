@@ -47,7 +47,7 @@ class Goban:
     def search_stones_LaB(self,image,th):
         stones = []
         false_stones = 0
-        circles = search_stones(image, None)
+        circles = search_stones(image)
         lab_img = np.zeros(image.shape[:2], np.uint8)
         lab_img = cvtColor(image, COLOR_BGR2Lab)
         for n in range(circles.cols):
@@ -69,24 +69,26 @@ class Goban:
         return image, stones
 
     def search_stones_old(self, image, threshold):
-        circles = search_stones(image, None)
+        circles = search_stones(image)
         false_stones = 0
         stones = []
+        if circles == None:
+            return image, stones
         for ci in circles[0,:]:
             ci = np.rint(ci).astype(np.int) # apply round and int
-            pt = (ci[1], ci[0])
+            pt = (ci[0], ci[1])
             radious = ci[2]
             # Comprobar el color en la imagen
             color = check_color_stone(pt, radious, image, threshold)
             position = Move.pixel_to_position(image.shape[0], pt)
             if color == BLACK:
-                circle(image, pt, radious, (255, 0, 0), 2)
+                circle(image, pt, radious, (255, 255, 255), 2)
                 stones.append(Move(color, position))
             elif color == WHITE:
-                circle(image, pt, radious, (0, 255, 0), 2)
+                circle(image, pt, radious, (0, 0, 0), 2)
                 stones.append(Move(color, position))
             else:
-                #circle(image, pt, radious, (255,255,0), 2)
+                circle(image, pt, radious, (255,0,0), 2)
                 false_stones += 1
         return image, stones
 
