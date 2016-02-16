@@ -41,15 +41,10 @@ def search_stones(img, corners, dp=2):
     :Param dp: profundidad de bÃºsqueda de cÃ­rculos
     :Type dp: int
     :Keyword dp: 2 era el valor que mejor funcionaba. Prueba y error """
-    gray = np.zeros((img.width, img.height), np.uint8)
-    cvtColor(img, gray, COLOR_BGR2GRAY)
-    gray_aux = gray.clone()
-    # creo una matriz de para guardar los circulos encontrados
-    # circles = CreateMat(1, gray_aux.height*gray_aux.width, CV_32FC3) before
-    circles = np.zeros((1, gray_aux.height*gray_aux.width), np.uint8)
+    gray = cvtColor(img, COLOR_BGR2GRAY)
     # r es el la mitad del tamaño de un cuadrado, el radio deseado
-    r = img.width/(GOBAN_SIZE*2)
-    HoughCircles(gray, circles, HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
+    r = img.shape[0]/(GOBAN_SIZE*2)
+    circles = HoughCircles(gray, HOUGH_GRADIENT, dp, int(r*0.5), 50, 55,
             int(r*0.7), int(r*1.2))
     return circles
 
@@ -70,7 +65,7 @@ def check_color_stone(pt, radious, img, threshold=190):
     black_total = 0
     white_total = 0
     no_color = 0
-    for x in range(pt[0] - radious/2, pt[0] + radious/2):
+    for x in range(int(pt[0] - radious/2), int(pt[0] + radious/2)):
         try:
             pixel = img.at(pt[1], x)[:-1]
         except:
@@ -81,7 +76,7 @@ def check_color_stone(pt, radious, img, threshold=190):
             black_total += 1
         else:
             no_color += 1
-    for y in range(pt[1] - radious/2, pt[1] + radious/2):
+    for y in range(int(pt[1] - radious/2), int(pt[1] + radious/2)):
         try:
             pixel = img.at(y, pt[0])
         except:

@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import numpy as np
 from rocamgo.cte import NUM_EDGES
 from rocamgo.cte import GOBAN_SIZE
 from math import hypot
@@ -57,7 +58,7 @@ def get_max_edge(corners):
     :Rtype: int
     """
     edges = []
-    for c in xrange(NUM_EDGES):
+    for c in range(NUM_EDGES):
         if c == 0 or c == 2:
             edges.append(distance_between_two_points(corners[c],corners[(c+1)%4]))
         else:
@@ -88,13 +89,13 @@ def get_external_corners_prespective_correction(corners):
     """
     left = distance_between_two_points(corners[0],corners[1])/distance_between_two_points(corners[2],corners[3])
     top = distance_between_two_points(corners[0],corners[2])/distance_between_two_points(corners[1],corners[3])
-    X1,Y1=get_xy_correction(corners[0],corners[3])
-    X2,Y2=get_xy_correction(corners[1],corners[2])
-    correction=[]    
-    correction.append((corners[0][0]-X1*top*left,corners[0][1]-Y1*top*left))
-    correction.append((corners[1][0]-X2*left/top,corners[1][1]+Y2*left/top))
-    correction.append((corners[2][0]+X2*top/left,corners[2][1]-Y2*top/left))
-    correction.append((corners[3][0]+X1/(left*top),corners[3][1]+Y1/(left*top)))
+    X1,Y1 = get_xy_correction(corners[0],corners[3])
+    X2,Y2 = get_xy_correction(corners[1],corners[2])
+    correction = np.zeros((4, 2), dtype=np.float32)
+    correction[0] = (corners[0][0]-X1*top*left, corners[0][1]-Y1*top*left)
+    correction[1] = (corners[1][0]-X2*left/top, corners[1][1]+Y2*left/top)
+    correction[2] = (corners[2][0]+X2*top/left, corners[2][1]-Y2*top/left)
+    correction[3] = (corners[3][0]+X1/(left*top), corners[3][1]+Y1/(left*top))
     return correction
 
 def get_external_corners(corners):

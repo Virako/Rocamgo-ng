@@ -72,17 +72,15 @@ def get_corners(contour):
     :Type contour: CvSeq
     :Return: lista de esquinas
     :Rtype: list """
-    corners = []
-    for (x,y) in contour:
-        corners.append((x,y))
-    corners.sort()
-    c1 = corners[:2]
-    c2 = corners[2:]
-    if corners[0][1] >= corners[1][1]:
-        c1.reverse()
-    if corners[2][1] >= corners[3][1]:
-        c2.reverse()
-    return c1 + c2
+    corners = np.zeros((4,2))
+    # [ [[x,y]], [[x,y]], ... ] to [ [x,y], [x,y], ... ]
+    for n in range(len(contour)):
+        corners[n] = contour[n][0]
+    corners.view('f8,f8').sort(order=['f0'], axis=0)
+    corners[:2].view('f8,f8').sort(order=['f1'], axis=0)
+    corners[2:].view('f8,f8').sort(order=['f1'], axis=0)
+    return corners
+
 
 
 def filter_image(img):
@@ -113,9 +111,9 @@ def detect_contour(img):
     imcol = img.shape[1]
     for contour in contours:
         if len(contour) >= NUM_EDGES and \
-                ((imcol*2 + imrow*2) * MAX_BOARD_PERIMETER) > arcLength(contour,False) > ((imcol*2 + imrow*2) * MIN_BOARD_PERIMETER)  and \
+                ((imcol*2 + imrow*2) * MAX_BOARD_PERIMETER) > arcLength(contour, True) > ((imcol*2 + imrow*2) * MIN_BOARD_PERIMETER)  and \
                 (imcol * imrow) * MAX_BOARD_AREA > contourArea(contour) > ((imcol * imrow) * MIN_BOARD_AREA):
-            perimeter = arcLength(contour)
+            perimeter = arcLength(contour, True)
             seq_app = approxPolyDP(contour, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 contornos.append(seq_app)
@@ -139,7 +137,7 @@ def search_goban(img):
             THRESH_BINARY_INV, 7, 2)
     #img_filtered = filter_image(img_gray)
     contour = detect_contour(img_gray)
-    if contour:
+    if contour != None and contour.any():
         return get_corners(contour)
     else:
         return None

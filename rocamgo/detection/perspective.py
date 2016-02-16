@@ -45,11 +45,12 @@ def perspective(img, corners):
     # The goban have a relation 15/14 height/width
     # relation = 14/15.0
     # In the sequence, the orden of corners are ul, dl, dr, ur
-    corners_transf = ((0,0),(0,max_edge),(max_edge,0),(max_edge,max_edge))
-    #mat = CreateMat(3, 3, CV_32FC1) before
-    mat = np.zeros((3, 3), np.uint8)
-    getPerspectiveTransform( corners, corners_transf, mat)
-    #src = CreateImage((max_edge, max_edge), img.depth, img.nChannels) before
-    src = np.zeros((max_edge, max_edge), np.uint8)
-    warpPerspective(img, src, mat)
-    return src
+    corners_transf = np.float32([
+            [0,0],
+            [0,max_edge],
+            [max_edge,0],
+            [max_edge,max_edge]]
+    )
+    mat = getPerspectiveTransform(corners, corners_transf)
+    dst = warpPerspective(img, mat, (max_edge, max_edge))
+    return dst

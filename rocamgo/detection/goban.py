@@ -32,12 +32,12 @@ class Goban:
     def extract(self, image):
         self._prev_corners = copy(self.current_corners)
         self.current_corners = search_goban(image)
-        if not self.current_corners:
+        if self.current_corners == None:
             self.current_corners = copy(self._prev_corners)
         if check_goban_moved(self._prev_corners, self.current_corners):
             self._good_corners = copy(self.current_corners)
             # print("MOVED")
-        if self._good_corners:
+        if self._good_corners != None:
             return perspective(image, self._good_corners), self._good_corners
         return None, []
 
@@ -72,18 +72,18 @@ class Goban:
         circles = search_stones(image, None)
         false_stones = 0
         stones = []
-        for n in range(circles.cols):
-            pixel = Get1D(circles, n)
-            pt = (Round(pixel[0]), Round(pixel[1]))
-            radious = Round(pixel[2])
+        for ci in circles[0,:]:
+            ci = np.rint(ci).astype(np.int) # apply round and int
+            pt = (ci[1], ci[0])
+            radious = ci[2]
             # Comprobar el color en la imagen
             color = check_color_stone(pt, radious, image, threshold)
-            position = Move.pixel_to_position(image.width, pixel)
+            position = Move.pixel_to_position(image.shape[0], pt)
             if color == BLACK:
-                circle(image, pt, radious, CV_RGB(255, 0, 0), 2)
+                circle(image, pt, radious, (255, 0, 0), 2)
                 stones.append(Move(color, position))
             elif color == WHITE:
-                circle(image, pt, radious, CV_RGB(0, 255, 0), 2)
+                circle(image, pt, radious, (0, 255, 0), 2)
                 stones.append(Move(color, position))
             else:
                 #circle(image, pt, radious, (255,255,0), 2)
@@ -113,8 +113,8 @@ class Goban:
                 radius = Round(pixel[2])
                 position = Move.pixel_to_position(image.width, pt)
                 stones.append(Move(k, position))
-                circle(image, pt, radius, CV_RGB(255, 255, 255)
-                    if k == BLACK else CV_RGB(0, 0, 0), 2)
+                circle(image, pt, radius, (255, 255, 255)
+                    if k == BLACK else (0, 0, 0), 2)
         return image, stones
 
     def search_stones_simple(self, image, threshold):
@@ -146,8 +146,8 @@ class Goban:
                     stones.append(Move(k, position))
                     center = tuple(Round(v) for v in center)
                     radius = Round(radius)
-                    circle(image, center, radius, CV_RGB(255, 255, 255)
-                        if k == BLACK else CV_RGB(0, 0, 0), 2)
+                    circle(image, center, radius, (255, 255, 255)
+                        if k == BLACK else (0, 0, 0), 2)
                 contours = contours.h_next()
         return image, stones
 

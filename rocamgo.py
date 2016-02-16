@@ -33,6 +33,7 @@
 :Type key: int
 """
 import argparse
+import numpy as np
 
 from cv2 import imshow
 from cv2 import waitKey
@@ -79,12 +80,12 @@ def main(parser):
             record.add_frame(img)
 
         ideal_img, good_corners = gd.extract(img)
-        if good_corners:
+        if good_corners != None:
             # Paint corners for tested
             for corner in good_corners:
-                circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
+                circle(img, tuple(corner.astype(np.int)), 4, (255, 0, 0), 4, 8, 0)
 
-        if ideal_img:
+        if ideal_img != None:
             ideal_img, stones = gd.search_stones(ideal_img, threshold)
             # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
