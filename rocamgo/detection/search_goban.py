@@ -19,33 +19,33 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from cv import Canny
-from cv import Smooth
-from cv import CreateMat
-from cv import CreateMemStorage
-from cv import CreateImage
-from cv import FindContours
-from cv import CV_RETR_CCOMP
-from cv import CV_CHAIN_APPROX_NONE
-from cv import CV_POLY_APPROX_DP
-from cv import CV_RGB2GRAY
-from cv import ContourArea
-from cv import IPL_DEPTH_8U
-from cv import CvtColor
-from cv import GetMat
-from cv import CV_GAUSSIAN
-from cv import ApproxPoly
-from cv import ArcLength
-from cv import AdaptiveThreshold
-from cv import CV_ADAPTIVE_THRESH_MEAN_C
-from cv import CV_THRESH_BINARY_INV
+import numpy as np
+from cv2 import (
+        ADAPTIVE_THRESH_MEAN_C,
+        CHAIN_APPROX_NONE,
+        COLOR_RGB2GRAY,
+        Canny,
+        RETR_CCOMP,
+        THRESH_BINARY_INV,
+        adaptiveThreshold,
+        approxPolyDP,
+        arcLength,
+        contourArea,
+        contourArea,
+        cvtColor,
+        findContours,
+        medianBlur,
+)
 from math import sqrt
-from rocamgo.cte import NUM_EDGES
-from rocamgo.cte import MAX_BOARD_PERIMETER
-from rocamgo.cte import MIN_BOARD_PERIMETER
-from rocamgo.cte import MAX_BOARD_AREA
-from rocamgo.cte import MIN_BOARD_AREA
-from rocamgo.cte import MAX_POLY_APPROX_ERROR
+from rocamgo.cte import (
+        MAX_BOARD_AREA,
+        MAX_BOARD_PERIMETER,
+        MAX_POLY_APPROX_ERROR,
+        MIN_BOARD_AREA,
+        MIN_BOARD_PERIMETER,
+        NUM_EDGES,
+)
+
 
 def count_perimeter(seq):
     """Contamos el perímetro de una secuencia dada.
@@ -72,17 +72,15 @@ def get_corners(contour):
     :Type contour: CvSeq
     :Return: lista de esquinas
     :Rtype: list """
-    corners = []
-    for (x,y) in contour:
-        corners.append((x,y))
-    corners.sort()
-    c1 = corners[:2]
-    c2 = corners[2:]
-    if corners[0][1] >= corners[1][1]:
-        c1.reverse()
-    if corners[2][1] >= corners[3][1]:
-        c2.reverse()
-    return c1 + c2
+    corners = np.zeros((4,2))
+    # [ [[x,y]], [[x,y]], ... ] to [ [x,y], [x,y], ... ]
+    for n in range(len(contour)):
+        corners[n] = contour[n][0]
+    corners.view('f8,f8').sort(order=['f0'], axis=0)
+    corners[:2].view('f8,f8').sort(order=['f1'], axis=0)
+    corners[2:].view('f8,f8').sort(order=['f1'], axis=0)
+    return corners
+
 
 
 def filter_image(img):
@@ -92,10 +90,11 @@ def filter_image(img):
     :Type img: CvMat
     :Return: imagen filtrada
     :Rtype: CvMat """
-    aux_1 = CreateMat(img.rows, img.cols, img.type)
-    aux_2 = CreateMat(img.rows, img.cols, img.type)
+    aux_1 = np.zeros((img.rows, img.cols), np.uint8)
+    aux_2 = np.zeros((img.rows, img.cols), np.uint8)
     Canny(img, aux_2, 50, 200, 3)
-    Smooth(aux_2, aux_1, CV_GAUSSIAN, 1, 3)
+    #Smooth(aux_2, aux_1, CV_GAUSSIAN, 1, 3) # The function is now obsolete. Use GaussianBlur(), blur(), medianBlur() or bilateralFilter().
+    medianBlur(aux_2, aux_1, 1, 3)
     return aux_1
 
 
@@ -106,23 +105,18 @@ def detect_contour(img):
     :Type img: CvMat
     :Return: Contorno si no lo encuentra, sino None
     :Rtype: CvSeq """
-    storage = CreateMemStorage()
-    seq = FindContours(img, storage, CV_RETR_CCOMP, CV_CHAIN_APPROX_NONE,
-      offset=(0, 0))
+    retimg, contours, hier = findContours(img, RETR_CCOMP, CHAIN_APPROX_NONE, offset=(0, 0))
     contornos=[]
-    while seq:
-        if len(seq) >= NUM_EDGES and \
-            ((img.cols*2 + img.rows*2)*MAX_BOARD_PERIMETER) > ArcLength(seq) > ((img.cols*2 + img.rows*2)*MIN_BOARD_PERIMETER)  and \
-            (img.cols*img.rows)*MAX_BOARD_AREA > ContourArea(seq) > ((img.cols*img.rows)*MIN_BOARD_AREA):
-            perimeter = ArcLength(seq)
-            seq_app = ApproxPoly(seq, storage, CV_POLY_APPROX_DP, perimeter*MAX_POLY_APPROX_ERROR, 1)
+    imrow = img.shape[0]
+    imcol = img.shape[1]
+    for contour in contours:
+        if len(contour) >= NUM_EDGES and \
+                ((imcol*2 + imrow*2) * MAX_BOARD_PERIMETER) > arcLength(contour, True) > ((imcol*2 + imrow*2) * MIN_BOARD_PERIMETER)  and \
+                (imcol * imrow) * MAX_BOARD_AREA > contourArea(contour) > ((imcol * imrow) * MIN_BOARD_AREA):
+            perimeter = arcLength(contour, True)
+            seq_app = approxPolyDP(contour, perimeter*MAX_POLY_APPROX_ERROR, 1)
             if len(seq_app) == NUM_EDGES:
                 contornos.append(seq_app)
-        if seq.h_next() == None:
-            break
-        else:
-            seq = seq.h_next()
-
     if len(contornos):
         return contornos[0]
     return None
@@ -135,13 +129,15 @@ def search_goban(img):
     :Type img: IplImage # TODO comprobar tipo imagen
     :Return: lista de esquinas si las encuentra, sino None
     :Rtype: list or None """
-    aux_gray = CreateImage((img.width, img.height), IPL_DEPTH_8U, 1)
-    CvtColor(img, aux_gray, CV_RGB2GRAY)
-    img_gray = GetMat(aux_gray, 0)
-    AdaptiveThreshold(img_gray, img_gray, 255,CV_ADAPTIVE_THRESH_MEAN_C,CV_THRESH_BINARY_INV,7)
+    aux_gray = np.zeros(img.shape[:2])
+    aux_gray = cvtColor(img, COLOR_RGB2GRAY)
+    #img_gray = GetMat(aux_gray, 0)
+    img_gray = aux_gray.copy()
+    img_gray = adaptiveThreshold(img_gray, 255, ADAPTIVE_THRESH_MEAN_C,
+            THRESH_BINARY_INV, 7, 2)
     #img_filtered = filter_image(img_gray)
     contour = detect_contour(img_gray)
-    if contour:
+    if contour != None and contour.any():
         return get_corners(contour)
     else:
         return None

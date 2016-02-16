@@ -18,9 +18,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from game_info import GameInfo
 from rocamgo.cte import BLACK
 from rocamgo.cte import WHITE
+from rocamgo.game.game_info import GameInfo
 from rocamgo.game.move import Move
 
 
@@ -39,7 +39,7 @@ class Kifu:
             elif stone.color == WHITE:
                 stone_pass = Move(BLACK, (None, None))
             else:
-                print "Error: stone's color invalid"
+                print("Error: stone's color invalid")
             self.move_list.append(stone_pass)
             self.notify(stone_pass)
         self.move_list.append(stone)
@@ -53,13 +53,13 @@ class Kifu:
         """ Notificamos el cambio a los servidores añadidos. """
         if stone.color == BLACK:
             try:
-                print "B(%d, %d)" % (stone.x, stone.y)
+                print("B(%d, %d)" % (stone.x, stone.y))
             except TypeError:
-                print "B()"
+                print("B()")
         else:
             try:
-                print "W(%d, %d)" % (stone.x, stone.y)
+                print("W(%d, %d)" % (stone.x, stone.y))
             except TypeError:
-                print "W()"
+                print("W()")
         for o in self._observers:
             o.add_stone(stone.pt)

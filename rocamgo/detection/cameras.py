@@ -26,14 +26,13 @@
 :Type camera: Capture
 """
 
-from cv import ShowImage
-from cv import WaitKey
-from cv import SetMouseCallback
-from cv import CV_EVENT_LBUTTONDBLCLK
-from cv import CaptureFromCAM
-from cv import QueryFrame
-from cv import DestroyWindow
-from cv import NamedWindow
+from cv2 import imshow
+from cv2 import waitKey
+from cv2 import setMouseCallback
+from cv2 import EVENT_LBUTTONDBLCLK
+from cv2 import VideoCapture
+from cv2 import destroyWindow
+from cv2 import namedWindow
 import sys
 
 from rocamgo.cte import MAX_CAMERAS
@@ -48,7 +47,7 @@ class Cameras:
         #cam.capture = CreateFileCapture("http://192.168.1.2:5143/mjpeg")
         self.cameras = []
         self.camera = None
-        if sys.platform == 'linux2':
+        if sys.platform == 'linux':
             self.check_cameras = self.check_cameras_linux
         elif sys.platform == 'win32':
             self.check_cameras = self.check_cameras_windows
@@ -67,7 +66,7 @@ class Cameras:
         :Param camera: objeto Capture
         :Type camera: Capture
         """
-        if event == CV_EVENT_LBUTTONDBLCLK:
+        if event == EVENT_LBUTTONDBLCLK:
             self.camera = self.cameras[camera]
 
     def check_cameras_linux(self, num=MAX_CAMERAS):
@@ -81,12 +80,13 @@ class Cameras:
         """
         n = 0
         while len(self.cameras) < num and n <= MAX_CAMERAS:
-            camera = CaptureFromCAM(n)
-            if QueryFrame(camera):
+            camera = VideoCapture(n)
+            retval, frame = camera.read()
+            if retval:
                 self.cameras.append(camera)
             n += 1
         if num != MAX_CAMERAS and len(self.cameras) != num:
-            print "Found %d of %d cameras. " % (len(self.cameras), num)
+            print("Found %d of %d cameras. " % (len(self.cameras), num))
             exit()
         return len(self.cameras)
 
@@ -103,11 +103,11 @@ class Cameras:
         ierror = 0
         camList = []
         while len(camList) < num and n <= MAX_CAMERAS:
-            camList.append(CaptureFromCAM(n))
+            camList.append(VideoCapture(n))
             n += 1
         n = 0
         while n < num and n <= MAX_CAMERAS:
-            frame = QueryFrame(camList[n])
+            retval, frame = camList[n].read()
             if frame and frame.height:
                 camList[n] = None
             else:
@@ -115,15 +115,15 @@ class Cameras:
             n += 1
         if ierror:
             self.cameras = None
-            print "Found %d of %d cameras. " % (num - ierror, num)
+            print("Found %d of %d cameras. " % (num - ierror, num))
             exit()
             # return None     #cámaras repetidas
         n = 0
         while len(self.cameras) < num and n <= MAX_CAMERAS:
-            self.cameras.append(CaptureFromCAM(n))
+            self.cameras.append(VideoCapture(n))
             n += 1
         if num != MAX_CAMERAS and len(self.cameras) != num:
-            print "Found %d of %d cameras. " % (len(self.cameras), num)
+            print("Found %d of %d cameras. " % (len(self.cameras), num))
             exit()
             # return None
         return len(self.cameras)
@@ -140,15 +140,15 @@ class Cameras:
             return self.cameras[0]
         elif len(self.cameras) > 1:
             for i in range(len(self.cameras)):
-                NamedWindow(str(i))
-                SetMouseCallback(str(i), self.on_mouse, i)
+                namedWindow(str(i))
+                setMouseCallback(str(i), self.on_mouse, i)
             while not self.camera:
                 for i in range(len(self.cameras)):
-                    img = QueryFrame(self.cameras[i])
-                    ShowImage(str(i), img)
-                    WaitKey(1)
+                    retval, img = self.cameras[i].read()
+                    imshow(str(i), img)
+                    waitKey(1)
             for i in range(len(self.cameras)):
-                DestroyWindow(str(i))
+                destroyWindow(str(i))
             for i in range(len(self.cameras)):
                 if self.cameras[i] != self.camera:
                     self.cameras[i] = None

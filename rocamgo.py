@@ -33,10 +33,11 @@
 :Type key: int
 """
 import argparse
+import numpy as np
 
-from cv import ShowImage
-from cv import WaitKey
-from cv import Circle
+from cv2 import imshow
+from cv2 import waitKey
+from cv2 import circle
 
 from rocamgo.cte import GOBAN_SIZE
 from rocamgo.cte import FPS
@@ -72,33 +73,33 @@ def main(parser):
 
     while True:
         # Select image from camera
-        img = cs.get_frame()
-        if not img:
+        retval, img = cs.get_frame()
+        if not retval:
             break
         if parser.record:
             record.add_frame(img)
 
         ideal_img, good_corners = gd.extract(img)
-        if good_corners:
+        if good_corners != None:
             # Paint corners for tested
             for corner in good_corners:
-                Circle(img, corner, 4, (255, 0, 0), 4, 8, 0)
+                circle(img, tuple(corner.astype(np.int)), 4, (255, 0, 0), 4, 8, 0)
 
-        if ideal_img:
+        if ideal_img != None:
             ideal_img, stones = gd.search_stones(ideal_img, threshold)
             # Añadimos las piedras para trabajar con ellas estadísticamente
             goban.add_stones_to_statistical(stones)
 
-            ShowImage("Ideal", ideal_img)
+            imshow("Ideal", ideal_img)
 
-        ShowImage("Camera", img)
+        imshow("Camera", img)
 
-        key = WaitKey(FPS)
+        key = waitKey(FPS)
         if key == 27:  # Esc
             break
     if parser.path_sgf:
         name_file = SGFWriter.write(goban.kifu, parser.path_sgf)
-        print "Save game in %s/%s" % (parser.path_sgf, name_file)
+        print("Save game in %s/%s" % (parser.path_sgf, name_file))
     if parser.igs:
         igs.close()
 

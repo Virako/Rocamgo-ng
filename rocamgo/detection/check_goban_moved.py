@@ -18,13 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from rocamgo.cte import NUM_EDGES
-from rocamgo.cte import GOBAN_SIZE
-from functions import distance_between_two_points as distance
-from functions import direction_between_two_points as direction
-from functions import get_max_edge
 from math import acos
 from math import hypot
+
+from rocamgo.cte import GOBAN_SIZE
+from rocamgo.cte import NUM_EDGES
+from rocamgo.detection.functions import direction_between_two_points as direction
+from rocamgo.detection.functions import distance_between_two_points as distance
+from rocamgo.detection.functions import get_max_edge
 
 
 def is_same_quadrant(v1, v2):
@@ -62,7 +63,7 @@ def degress_between_two_vectors(v1, v2):
     except ZeroDivisionError:
         return 0
     except ValueError:
-        print "ValueError" # TODO
+        print("ValueError")
 
 
 def check_directions(directions):
@@ -97,17 +98,16 @@ def check_goban_moved(prev_corners, current_corners):
     :Return: True si el tablero se ha movido
     :Rtype: bool """
 
-    if not prev_corners or not current_corners:
+    if prev_corners == None or current_corners == None:
         return True
     # dist_min_of_movement = get_max_edge(prev_corners)/(2*GOBAN_SIZE)
     " Comprobamos primero si existe mucho movimiento. "
     dist = []
     directions = []
-    for i in xrange(NUM_EDGES):
+    for i in range(NUM_EDGES):
         dist.append(abs(distance(prev_corners[i], current_corners[i])))
         directions.append(direction(prev_corners[i], current_corners[i]))
-    f = lambda x: x>1
-    dist_list = filter(f, dist)
+    dist_list = [x for x in dist if x > 1]
     if len(dist_list) > 2:
         # min_mov=1/3 square TODO check impossible movement (Direcction)
         min_mov = get_max_edge(prev_corners)/((GOBAN_SIZE-1)*3.0)

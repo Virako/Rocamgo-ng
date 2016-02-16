@@ -47,8 +47,8 @@ class Igs:
         try:
             self.s.connect(('igs.joyjoy.net', 7777))
         except:
-            print """Connection problem. Try without --igs or check your network
-            connection. """
+            print("""Connection problem. Try without --igs or check your network
+                    connection. """)
             exit()
         self.s.recv(4096)
         self.s.send("%s\n" %user)
@@ -73,7 +73,7 @@ class Igs:
         try:
             self.s.send("%s\n" %pos_igs)
         except:
-            print "IGS problem. " # TODO
+            print("IGS problem. ")
 
 
     def close(self):
