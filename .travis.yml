@@ -14,10 +14,11 @@ before_script:
     - git checkout 3.1.0
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -D BUILD_opencv_python3=ON -D PYTHON3_EXECUTABLE=/usr/bin/python3.3 -D PYTHON3_INCLUDE_DIR=/usr/include/python3.3m -D PYTHON3_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.3m -D PYTHON3_LIBRARY=/usr/include/x86_64-linux-gnu/python3.3m -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include -D PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages ..
     - make -j8
     - sudo make -j8 install 
     - export PYTHONPATH="lib/python3"
     - cd ../..
 script:
+    - python --version
     - python3 -m unittest tests/main.py
