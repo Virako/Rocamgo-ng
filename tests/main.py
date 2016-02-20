@@ -1,6 +1,6 @@
 import unittest
-
 from rocamgo.cte import BLACK
+
 
 class TestStringMethods(unittest.TestCase):
 
