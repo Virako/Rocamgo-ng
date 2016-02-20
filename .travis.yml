@@ -18,5 +18,6 @@ before_script:
     - make -j8
     - sudo make -j8 install 
     - export PYTHONPATH="lib/python3"
+    - cd ../..
 script:
     - python3 -m unittest tests/main.py
