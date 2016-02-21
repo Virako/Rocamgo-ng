@@ -10,13 +10,19 @@ install:
     - sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev # python-dev python-numpy 
     - sudo apt-get install tree
 before_script:
-    - tree -f home/travis/virtualenv/python3.3.5/
+    - ls /usr/bin | grep python
+    - ls /usr/include | grep python
+    - ls /usr/include/x86_64-linux-gnu | grep python
+    - ls /usr/lib | grep python
+    - ls /usr/lib/python3/dist-packages | grep python
+    - ls /usr/lib/python3/dist-packages/numpy/core/include | grep python
+    - ls /usr/lib/x86_64-linux-gnu | grep python
     #- git clone https://github.com/Itseez/opencv.git
     #- cd opencv
     #- git checkout 3.1.0
     #- mkdir build
     #- cd build
-    #- cmake -D BUILD_opencv_python3=ON -D PYTHON3_EXECUTABLE=/usr/bin/python3.3 -D PYTHON3_INCLUDE_DIR=/usr/include/python3.3m -D PYTHON3_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.3m -D PYTHON3_LIBRARY=/usr/include/x86_64-linux-gnu/python3.3m -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include -D PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages ..
+    #- cmake -D BUILD_opencv_python3=ON -D PYTHON3_EXECUTABLE=/usr/bin/python3.3 -D PYTHON3_INCLUDE_DIR=/usr/include/python3.3m -D PYTHON3_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.3m -D PYTHON3_LIBRARY=/usr/lib/x86_64-linux-gnu/python3.3m -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include -D PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages ..
     #- make -j8
     #- sudo make -j8 install 
     #- export PYTHONPATH="lib/python3"
