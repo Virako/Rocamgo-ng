@@ -4,19 +4,20 @@ python:
 before_install:
     - sudo apt-get update
 install:
-    - sudo apt-get install build-essential
+    #- sudo apt-get install build-essential
     - sudo apt-get install python3-dev python3-numpy
-    - sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-    - sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev # python-dev python-numpy 
+    #- sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+    #- sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev # python-dev python-numpy 
     - sudo apt-get install tree
 before_script:
     - ls /usr/bin | grep python
     - ls /usr/include | grep python
-    - ls /usr/include/x86_64-linux-gnu | grep python
+    - ls /usr/include/ | grep linux
     - ls /usr/lib | grep python
-    - ls /usr/lib/python3/dist-packages | grep python
-    - ls /usr/lib/python3/dist-packages/numpy/core/include | grep python
-    - ls /usr/lib/x86_64-linux-gnu | grep python
+    - ls /usr/lib | grep linux
+    - ls /usr/lib/python3.2 
+    - ls /usr/lib/python3/dist-packages
+    - ls /usr/lib/python3/dist-packages/numpy/core/include
     #- git clone https://github.com/Itseez/opencv.git
     #- cd opencv
     #- git checkout 3.1.0
