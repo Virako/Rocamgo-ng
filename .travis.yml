@@ -1,6 +1,6 @@
 language: python
 python:
-    - "3.3"
+    - "3.4"
 before_install:
     - sudo apt-get update
 install:
@@ -23,19 +23,17 @@ before_script:
     - git checkout 3.1.0
     - mkdir build
     - cd build
-    - export PY3="/home/travis/virtualenv/python3.3.5"
+    - export PY3="/home/travis/virtualenv/python3.4.2"
     - cmake -D BUILD_opencv_python3=ON \
       -D PYTHON3_EXECUTABLE=PY3/bin/python3 \
-      -D PYTHON3_INCLUDE_DIR=PY3/include/python3.3m \
-      -D PYTHON3_LIBRARY=PY3/lib/python3.3 \
-      -D PYTHON3_NUMPY_INCLUDE_DIRS=PY3/lib/python3.3/site-packages/numpy/core/include \
-      -D PYTHON3_PACKAGES_PATH=PY3/lib/python3.3/site-packages ..
+      -D PYTHON3_INCLUDE_DIR=PY3/include/python3.4 \
+      -D PYTHON3_LIBRARY=PY3/lib/python3.4 \
+      -D PYTHON3_NUMPY_INCLUDE_DIRS=PY3/lib/python3.4/site-packages/numpy/core/include \
+      -D PYTHON3_PACKAGES_PATH=PY3/lib/python3.4/site-packages ..
     - make -j8
     #- sudo make -j8 install 
-    - echo $PYTHONPATH
     - export PYTHONPATH=$PYTHONPATH:$(pwd)/lib/python3
     - ls lib
-    - echo $PYTHONPATH
     - cd ../..
 script:
     - python --version
