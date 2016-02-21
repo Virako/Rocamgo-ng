@@ -7,13 +7,9 @@ install:
     - sudo apt-get install build-essential
     - sudo apt-get install python3-dev
     - sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-    - sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev # python-dev python-numpy 
-    - sudo apt-get install tree
+    - sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
     - pip install numpy
 before_script:
-    - pwd
-    - tree -f /home/travis/virtualenv/
-    - ls ../../
     #- ls /usr/bin | grep python
     #- ls /usr/include | grep python
     #- ls /usr/include/x86_64-linux-gnu
@@ -36,8 +32,8 @@ before_script:
       -D PYTHON3_PACKAGES_PATH=PY3/lib/python3.3/site-packages ..
     - make -j8
     - sudo make -j8 install 
-    - export PYTHONPATH="lib/python3"
     - cd ../..
+    - export PYTHONPATH="/usr/local/lib/python3.3"
 script:
     - python --version
     - python3 -m unittest tests/main.py
