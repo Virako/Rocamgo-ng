@@ -31,9 +31,12 @@ before_script:
       -D PYTHON3_NUMPY_INCLUDE_DIRS=PY3/lib/python3.3/site-packages/numpy/core/include \
       -D PYTHON3_PACKAGES_PATH=PY3/lib/python3.3/site-packages ..
     - make -j8
-    - sudo make -j8 install 
+    #- sudo make -j8 install 
+    - echo $PYTHONPATH
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)/lib/python3"
+    - ls lib
+    - echo $PYTHONPATH
     - cd ../..
-    - export PYTHONPATH="/usr/local/lib/python3.3"
 script:
     - python --version
     - python3 -m unittest tests/main.py
