@@ -8,10 +8,8 @@ before_install:
     - sudo apt-get update
 install:
     - sudo apt-get install build-essential
-    - sudo apt-get install python3-dev
     - sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
     - sudo apt-get install libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
-    - pip install numpy
 before_script:
     - ls /usr/bin | grep python
     - ls /usr/include | grep python
@@ -35,7 +33,10 @@ before_script:
     - echo 'export PYTHONPATH=$PYTHONPATH:'$(pwd)'/lib/python3' >> ~/virtualenv/python3.3/bin/activate
     - echo 'export PYTHONPATH=$PYTHONPATH:'$(pwd)'/lib/python3' >> ~/virtualenv/python3.4/bin/activate
     - echo 'export PYTHONPATH=$PYTHONPATH:'$(pwd)'/lib/python3' >> ~/virtualenv/python3.5/bin/activate
-    - source ~/virtualenv/python3.3/bin/activate
     - cd ../..
+cache:
+    directories:
+        - opencv
 script:
+    - source ~/virtualenv/python3.3/bin/activate
     - python -m unittest tests/main.py
