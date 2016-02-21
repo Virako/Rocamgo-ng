@@ -1,8 +1,8 @@
 language: python
 python:
     #- "3.2"
-    - "3.3"
-    #- "3.4"
+    #- "3.3"
+    - "3.4"
     #- "3.5"
 before_install:
     - sudo apt-get update
@@ -24,7 +24,7 @@ before_script:
       -D PYTHON3_INCLUDE_DIR=/usr/include/python3 \
       -D PYTHON3_LIBRARY=/usr/lib/python3 \
       -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include \
-      -D PYTHON3_PACKAGES_PATH=/usr/lib/python3.4/dist-packages ..
+      -D PYTHON3_PACKAGES_PATH=/usr/lib/python3/dist-packages ..
     - make -j8
     - sudo make -j8 install 
     #- ln -s /usr/local/lib/python3.2/site-packages/cv2.so ~/virtualenv/python3.2/lib/python3.2/
