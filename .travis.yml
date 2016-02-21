@@ -33,7 +33,7 @@ before_script:
     - make -j8
     #- sudo make -j8 install 
     - echo $PYTHONPATH
-    - export PYTHONPATH=$PYTHONPATH:$(pwd)/lib/python3"
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)/lib/python3
     - ls lib
     - echo $PYTHONPATH
     - cd ../..
